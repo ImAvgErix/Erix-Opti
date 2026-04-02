@@ -70,9 +70,9 @@ export async function POST(req: Request) {
     ok: true,
     id: entry.id,
     direct: entry.direct,
-    url: entry.url ?? null,
+    url: entry.url,
     message: entry.direct
-      ? "Open URL in desktop app or use a server-side fetch + stream to the browser."
-      : "Open vendor page in-app (WebView2) or embedded browser on the host.",
+      ? `Ready to download ${entry.name}.`
+      : `Opening ${entry.name} page.`,
   });
 }

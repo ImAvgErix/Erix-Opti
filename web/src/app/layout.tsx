@@ -16,14 +16,17 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ErixOpti — Gaming optimization",
+  title: "ErixOpti",
   description:
-    "Premium control surface for intelligent Windows 11 gaming optimization.",
+    "Intelligent Windows 11 gaming optimization — hardware-aware tweaks, in-app downloads, and system tools.",
+  icons: { icon: "/favicon.ico" },
 };
 
 export const viewport: Viewport = {
   themeColor: "#09090b",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -32,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}
       >
