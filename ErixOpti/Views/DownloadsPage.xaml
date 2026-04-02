@@ -21,14 +21,19 @@
                                     <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind Item.Name}" />
                                     <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" Text="{x:Bind Item.Description}" />
                                     <TextBlock FontSize="11" Foreground="{StaticResource AppTextDimBrush}" Text="{x:Bind Item.Category}" />
-                                    <TextBlock FontSize="11" Foreground="{StaticResource ErrorBrush}" Text="{x:Bind ErrorText, Mode=OneWay}" />
-                                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind ProgressPercent, Mode=OneWay}" Width="220" HorizontalAlignment="Left" />
+                                    <TextBlock FontSize="11" Foreground="{StaticResource ErrorBrush}" Text="{x:Bind ErrorText, Mode=OneWay}"
+                                               Visibility="{x:Bind ShowError, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
+                                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind ProgressPercent, Mode=OneWay}" Width="220" HorizontalAlignment="Left"
+                                                 Visibility="{x:Bind ShowProgress, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
                                     <Button Command="{x:Bind DownloadCommand}" Padding="14,8" CornerRadius="8" FontWeight="SemiBold"
-                                            Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" Content="Download" />
+                                            Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B"
+                                            Content="{x:Bind DownloadButtonText, Mode=OneWay}"
+                                            IsEnabled="{x:Bind IsDownloadEnabled, Mode=OneWay}" />
                                     <Button Command="{x:Bind InstallCommand}" Padding="14,8" CornerRadius="8"
-                                            Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}" Content="Install" />
+                                            Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}" Content="Install"
+                                            Visibility="{x:Bind ShowInstall, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
                                 </StackPanel>
                             </Grid>
                         </Border>
