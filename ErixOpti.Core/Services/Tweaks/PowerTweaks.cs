@@ -31,9 +31,9 @@ public static class PowerTweaks
             Revert = async (p, ct) => { await ProcessRunner.RunAsync("powercfg", "-setacvalueindex SCHEME_CURRENT SUB_PROCESSOR THROTTLING 1", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); } },
         new() { Id = "pwr.hdd-timeout", Name = "Disk never sleep", Category = "Power", ShouldApply = hw => hw.IsDesktop,
             Apply = async (p, ct) => { p.Report("Disk timeout → never"); await ProcessRunner.RunAsync("powercfg", "-setacvalueindex SCHEME_CURRENT SUB_DISK DISKIDLE 0", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); },
-            Revert = async (p, ct) => { await ProcessRunner.RunAsync("powercfg", "-setacvalueindex SCHEME_CURRENT SUB_DISK DISKIDLE 1200", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); } },
+            Revert = async (p, ct) => { p.Report("Revert disk timeout"); await ProcessRunner.RunAsync("powercfg", "-setacvalueindex SCHEME_CURRENT SUB_DISK DISKIDLE 3600", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); } },
         new() { Id = "pwr.cpu-max", Name = "CPU max performance 100%", Category = "Power", ShouldApply = _ => true,
             Apply = async (p, ct) => { p.Report("CPU max state 100%"); await ProcessRunner.RunAsync("powercfg", $"-setacvalueindex SCHEME_CURRENT {PowerCfgHelper.SubGroupProcessor} BC5038F7-23E0-4960-96DA-33ABAF5935EC 100", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); },
-            Revert = async (p, ct) => { p.Report("Revert CPU max state"); await ProcessRunner.RunAsync("powercfg", $"-setacvalueindex SCHEME_CURRENT {PowerCfgHelper.SubGroupProcessor} BC5038F7-23E0-4960-96DA-33ABAF5935EC 90", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); } },
+            Revert = async (p, ct) => { p.Report("Revert CPU max state"); await ProcessRunner.RunAsync("powercfg", $"-setacvalueindex SCHEME_CURRENT {PowerCfgHelper.SubGroupProcessor} BC5038F7-23E0-4960-96DA-33ABAF5935EC 100", false, null, ct); await ProcessRunner.RunAsync("powercfg", "-setactive SCHEME_CURRENT", false, null, ct); } },
     ];
 }
