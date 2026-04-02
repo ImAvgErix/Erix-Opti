@@ -75,8 +75,8 @@ public static class RegistryTweaks
         D("reg.no-explorer-ads", "No Explorer ads", "Explorer", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "ShowSyncProviderNotifications", 0, 1),
         D("reg.widgets-off", "Widgets off", "Explorer", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Dsh", "AllowNewsAndInterests", 0, 1),
         D("reg.no-anim", "Disable window animations", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop\WindowMetrics", "MinAnimate", 0, 1),
-        D("reg.drag-height", "Reduce drag detection", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragHeight", 4, 4),
-        D("reg.drag-width", "Reduce drag detection width", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragWidth", 4, 4),
+        D("reg.drag-height", "Reduce drag detection", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragHeight", 2, 4),
+        D("reg.drag-width", "Reduce drag detection width", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragWidth", 2, 4),
         D("reg.smooth-scroll", "Disable smooth scrolling", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "SmoothScroll", 0, 1),
 
         // ── Storage / NTFS ──
