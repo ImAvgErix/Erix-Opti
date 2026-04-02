@@ -31,11 +31,26 @@ public sealed class HardwareService : IHardwareService, IDisposable
 
     private void DetectFormFactor(CancellationToken ct)
     {
-        var laptop = new HashSet<ushort>{8,9,10,14,18,21};
-        var desktop = new HashSet<ushort>{3,4,5,6,7,13,15,16,35,36};
+        var laptopSet = new HashSet<ushort>{8,9,10,14,18,21};
+        var desktopSet = new HashSet<ushort>{3,4,5,6,7,13,15,16,35,36};
         var factor = FormFactor.Unknown;
         using (var s = new ManagementObjectSearcher("SELECT ChassisTypes FROM Win32_SystemEnclosure"))
-            foreach (ManagementObject mo in s.Get()) { ct.ThrowIfCancellationRequested(); if (mo["ChassisTypes"] is ushort[] a) foreach (var t in a) { if (laptop.Contains(t)){factor=FormFactor.Laptop;break;} if (desktop.Contains(t)&&factor==FormFactor.Unknown) factor=FormFactor.Desktop; } mo.Dispose(); }
+        {
+            foreach (ManagementObject mo in s.Get())
+            {
+                ct.ThrowIfCancellationRequested();
+                if (mo["ChassisTypes"] is ushort[] arr)
+                {
+                    foreach (var t in arr)
+                    {
+                        if (laptopSet.Contains(t)) { factor = FormFactor.Laptop; break; }
+                        if (desktopSet.Contains(t) && factor == FormFactor.Unknown) factor = FormFactor.Desktop;
+                    }
+                }
+                mo.Dispose();
+                if (factor == FormFactor.Laptop) break;
+            }
+        }
         if (factor == FormFactor.Unknown) { using var b = new ManagementObjectSearcher("SELECT DeviceID FROM Win32_Battery"); foreach(ManagementObject mo in b.Get()){factor=FormFactor.Laptop;mo.Dispose();break;} }
         _current.FormFactor = factor == FormFactor.Unknown ? FormFactor.Desktop : factor;
     }
@@ -87,10 +102,24 @@ public sealed class HardwareService : IHardwareService, IDisposable
     {
         using (var os = new ManagementObjectSearcher("SELECT TotalVisibleMemorySize,FreePhysicalMemory FROM Win32_OperatingSystem"))
             foreach (ManagementObject mo in os.Get()) { ct.ThrowIfCancellationRequested(); var tk = Convert.ToDouble(mo["TotalVisibleMemorySize"]??0); var fk = Convert.ToDouble(mo["FreePhysicalMemory"]??0); _current.RamTotalGb = tk/1048576.0; _current.RamAvailableGb = fk/1048576.0; mo.Dispose(); break; }
-        int speed = 0, slots = 0; string type = "—";
+        int speed = 0, slots = 0;
+        var typesSeen = new HashSet<string>();
         using (var m = new ManagementObjectSearcher("SELECT Speed,SMBIOSMemoryType FROM Win32_PhysicalMemory"))
-            foreach (ManagementObject mo in m.Get()) { ct.ThrowIfCancellationRequested(); slots++; var sp = Convert.ToInt32(mo["Speed"]??0); if (sp>speed) speed=sp; var t = Convert.ToInt32(mo["SMBIOSMemoryType"]??0); type = t switch {26=>"DDR4",34=>"DDR5",24=>"DDR3",_=>$"Type{t}"}; mo.Dispose(); }
-        _current.RamSpeedMhz = speed; _current.RamType = type; _current.RamSlotsUsed = slots;
+        {
+            foreach (ManagementObject mo in m.Get())
+            {
+                ct.ThrowIfCancellationRequested();
+                slots++;
+                var sp = Convert.ToInt32(mo["Speed"] ?? 0);
+                if (sp > speed) speed = sp;
+                var t = Convert.ToInt32(mo["SMBIOSMemoryType"] ?? 0);
+                typesSeen.Add(t switch { 26 => "DDR4", 34 => "DDR5", 24 => "DDR3", _ => $"Type{t}" });
+                mo.Dispose();
+            }
+        }
+        _current.RamSpeedMhz = speed;
+        _current.RamType = typesSeen.Count == 0 ? "—" : string.Join(" / ", typesSeen);
+        _current.RamSlotsUsed = slots;
     }
 
     private void DetectStorage(CancellationToken ct)

@@ -53,7 +53,6 @@ public sealed partial class OptimizationsViewModel : ObservableObject
                 StatusMessage = p.Detail;
             });
             await _engine.ExecutePlanAsync(plan, progress, CancellationToken.None);
-            StatusMessage = $"Done — {plan.TotalCount} optimizations applied.";
             ProgressPercent = 100;
         }
         catch (Exception ex) { StatusMessage = $"Error: {ex.Message}"; }

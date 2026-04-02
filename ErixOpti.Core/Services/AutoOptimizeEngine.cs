@@ -31,6 +31,7 @@ public sealed class AutoOptimizeEngine : IAutoOptimizeEngine
 
     public async Task ExecutePlanAsync(OptimizePlan plan, IProgress<OptimizeProgress> progress, CancellationToken ct)
     {
+        int succeeded = 0, failed = 0;
         for (int i = 0; i < plan.TotalCount; i++)
         {
             ct.ThrowIfCancellationRequested();
@@ -40,12 +41,17 @@ public sealed class AutoOptimizeEngine : IAutoOptimizeEngine
             {
                 var sp = new Progress<string>(msg => progress.Report(new OptimizeProgress(i + 1, plan.TotalCount, op.Name, msg)));
                 await op.Apply(sp, ct).ConfigureAwait(false);
+                succeeded++;
             }
             catch (Exception ex)
             {
+                failed++;
                 progress.Report(new OptimizeProgress(i + 1, plan.TotalCount, op.Name, $"Failed: {ex.Message}"));
             }
         }
-        progress.Report(new OptimizeProgress(plan.TotalCount, plan.TotalCount, "Done", $"Applied {plan.TotalCount} optimizations."));
+        var summary = failed == 0
+            ? $"Applied {succeeded} optimizations successfully."
+            : $"Completed: {succeeded} succeeded, {failed} failed out of {plan.TotalCount}.";
+        progress.Report(new OptimizeProgress(plan.TotalCount, plan.TotalCount, "Done", summary));
     }
 }
