@@ -89,12 +89,37 @@ public sealed class HardwareService : IHardwareService, IDisposable
             if (string.IsNullOrWhiteSpace(n) || n!.Contains("Basic", StringComparison.OrdinalIgnoreCase)) { mo.Dispose(); continue; }
             _current.GpuName = n;
             var ram = Convert.ToUInt64(mo["AdapterRAM"] ?? 0UL);
-            _current.GpuMemoryGb = ram / (1024.0 * 1024.0 * 1024.0); if (_current.GpuMemoryGb < 0.01) _current.GpuMemoryGb = 0;
+            _current.GpuMemoryGb = ram / (1024.0 * 1024.0 * 1024.0);
+            if (_current.GpuMemoryGb < 0.01) _current.GpuMemoryGb = 0;
             _current.GpuDriverVersion = mo["DriverVersion"]?.ToString() ?? "—";
             if (mo["DriverDate"] is string ds) try { _current.GpuDriverDate = ManagementDateTimeConverter.ToDateTime(ds).ToString("d"); } catch { }
             var u = n.ToUpperInvariant();
             _current.PrimaryGpuVendor = u.Contains("NVIDIA") ? GpuVendor.Nvidia : u.Contains("AMD") || u.Contains("RADEON") ? GpuVendor.Amd : u.Contains("INTEL") ? GpuVendor.Intel : GpuVendor.Unknown;
             mo.Dispose(); break;
+        }
+
+        // WMI AdapterRAM is uint32 — capped at 4 GB. Use registry for real VRAM.
+        if (_current.GpuMemoryGb <= 4.0)
+        {
+            try
+            {
+                const string basePath = @"SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}";
+                using var baseKey = Registry.LocalMachine.OpenSubKey(basePath);
+                if (baseKey != null)
+                {
+                    foreach (var sub in baseKey.GetSubKeyNames())
+                    {
+                        using var devKey = baseKey.OpenSubKey(sub);
+                        var val = devKey?.GetValue("HardwareInformation.qwMemorySize");
+                        if (val is long qw && qw > 0)
+                        {
+                            _current.GpuMemoryGb = qw / (1024.0 * 1024.0 * 1024.0);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch { /* Registry VRAM fallback unavailable */ }
         }
     }
 
@@ -160,10 +185,36 @@ public sealed class HardwareService : IHardwareService, IDisposable
 
     private void DetectMonitors(CancellationToken ct)
     {
-        var mons = new List<string>(); int count = 0;
-        using var s = new ManagementObjectSearcher("SELECT Name,CurrentHorizontalResolution,CurrentVerticalResolution,CurrentRefreshRate FROM Win32_VideoController");
-        foreach (ManagementObject mo in s.Get()) { ct.ThrowIfCancellationRequested(); var h = Convert.ToInt32(mo["CurrentHorizontalResolution"]??0); var v = Convert.ToInt32(mo["CurrentVerticalResolution"]??0); var r = Convert.ToInt32(mo["CurrentRefreshRate"]??0); if (h>0&&v>0){count++;mons.Add($"{h}x{v}@{r}Hz");} mo.Dispose(); }
-        _current.MonitorCount = Math.Max(count, 1); _current.Monitors = mons;
+        var mons = new List<string>();
+
+        // Count actual physical monitors via PnP, not GPU adapters
+        int physicalCount = 0;
+        try
+        {
+            using var pnp = new ManagementObjectSearcher("SELECT Name FROM Win32_PnPEntity WHERE PNPClass='Monitor'");
+            foreach (ManagementObject mo in pnp.Get())
+            {
+                ct.ThrowIfCancellationRequested();
+                physicalCount++;
+                mo.Dispose();
+            }
+        }
+        catch { /* fallback below */ }
+
+        // Get resolution info from VideoController (one per adapter, gives active resolution)
+        using var s = new ManagementObjectSearcher("SELECT CurrentHorizontalResolution,CurrentVerticalResolution,CurrentRefreshRate FROM Win32_VideoController");
+        foreach (ManagementObject mo in s.Get())
+        {
+            ct.ThrowIfCancellationRequested();
+            var h = Convert.ToInt32(mo["CurrentHorizontalResolution"] ?? 0);
+            var v = Convert.ToInt32(mo["CurrentVerticalResolution"] ?? 0);
+            var r = Convert.ToInt32(mo["CurrentRefreshRate"] ?? 0);
+            if (h > 0 && v > 0) mons.Add($"{h}x{v} @ {r}Hz");
+            mo.Dispose();
+        }
+
+        _current.MonitorCount = Math.Max(physicalCount, 1);
+        _current.Monitors = mons;
     }
 
     private void DetectUsb(CancellationToken ct)

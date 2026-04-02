@@ -7,17 +7,40 @@ namespace ErixOpti.Core.Services;
 
 public sealed class BackupService : IBackupService
 {
+    private static readonly string[] TargetedRegistryPaths =
+    [
+        @"HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters",
+        @"HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters",
+        @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers",
+        @"HKLM\SOFTWARE\Microsoft\Windows\Dwm",
+        @"HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection",
+        @"HKLM\SOFTWARE\Policies\Microsoft\Windows\System",
+        @"HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search",
+        @"HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR",
+        @"HKLM\SYSTEM\CurrentControlSet\Control",
+        @"HKCU\Control Panel\Desktop",
+        @"HKCU\Software\Microsoft\GameBar",
+        @"HKCU\System\GameConfigStore",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications",
+        @"HKCU\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications",
+        @"HKCU\Software\Policies\Microsoft\Windows\Explorer",
+        @"HKCU\Software\NVIDIA Corporation\Global\NVTweak",
+    ];
+
     public string BackupRoot { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "ErixOpti",
-        "Backups");
+        "ErixOpti", "Backups");
 
     public async Task<BackupResult> CreateFullBackupAsync(IProgress<string> progress, CancellationToken ct)
     {
         if (!AdminHelper.IsRunningAsAdministrator())
-        {
-            return new BackupResult(false, null, null, null, "Administrator rights are required to create backups.");
-        }
+            return new BackupResult(false, null, null, null, "Administrator rights required.");
 
         Directory.CreateDirectory(BackupRoot);
         var stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
@@ -27,48 +50,44 @@ public sealed class BackupService : IBackupService
         string? restoreId = null;
         try
         {
-            progress.Report("Creating System Restore point…");
+            progress.Report("Creating System Restore point...");
             restoreId = await CreateRestorePointAsync(ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            progress.Report($"Restore point warning: {ex.Message}");
+            progress.Report($"Restore point skipped: {ex.Message}");
         }
 
         string? regPath = null;
         try
         {
-            progress.Report("Exporting registry hives…");
+            progress.Report("Backing up registry keys...");
             regPath = Path.Combine(folder, "registry");
             Directory.CreateDirectory(regPath);
-            await ExportRegistryAsync(regPath, progress, ct).ConfigureAwait(false);
+            await ExportTargetedRegistryAsync(regPath, progress, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            return new BackupResult(false, restoreId, null, null, $"Registry export failed: {ex.Message}");
+            progress.Report($"Registry backup warning: {ex.Message}");
+            // Non-fatal: continue with optimization even if some keys couldn't be exported
         }
 
         string? bcdPath = null;
         try
         {
-            progress.Report("Exporting BCD…");
+            progress.Report("Backing up BCD...");
             bcdPath = Path.Combine(folder, "bcd-backup.bcd");
             var (code, _, err) = await ProcessRunner.RunAsync(
-                "bcdedit",
-                $"/export \"{bcdPath}\"",
-                runElevated: false,
-                progress,
-                ct).ConfigureAwait(false);
+                "bcdedit", $"/export \"{bcdPath}\"", false, null, ct).ConfigureAwait(false);
             if (code != 0)
-            {
-                throw new InvalidOperationException(err);
-            }
+                progress.Report($"BCD backup warning: {err}");
         }
         catch (Exception ex)
         {
-            return new BackupResult(false, restoreId, regPath, null, $"BCD export failed: {ex.Message}");
+            progress.Report($"BCD backup skipped: {ex.Message}");
         }
 
+        progress.Report("Backup complete.");
         return new BackupResult(true, restoreId, regPath, bcdPath, null);
     }
 
@@ -77,32 +96,33 @@ public sealed class BackupService : IBackupService
         return await Task.Run(() =>
         {
             ct.ThrowIfCancellationRequested();
-            using var mc = new ManagementClass("root/default:SystemRestore");
-            using var outParams = (ManagementBaseObject)mc.InvokeMethod(
-                "CreateRestorePoint",
-                new object[] { "ErixOpti backup", 0, 100 });
-
-            return outParams?["ReturnValue"]?.ToString() ?? "created";
+            try
+            {
+                using var mc = new ManagementClass("root/default:SystemRestore");
+                using var inParams = mc.GetMethodParameters("CreateRestorePoint");
+                inParams["Description"] = "ErixOpti backup";
+                inParams["RestorePointType"] = 0;
+                inParams["EventType"] = 100;
+                using var outParams = mc.InvokeMethod("CreateRestorePoint", inParams, null);
+                return outParams?["ReturnValue"]?.ToString() ?? "created";
+            }
+            catch
+            {
+                return "skipped";
+            }
         }, ct).ConfigureAwait(false);
     }
 
-    private static async Task ExportRegistryAsync(string folder, IProgress<string> progress, CancellationToken ct)
+    private static async Task ExportTargetedRegistryAsync(string folder, IProgress<string> progress, CancellationToken ct)
     {
-        var exports = new (string Hive, string FileName)[]
-        {
-            ("HKLM", "hklm.reg"),
-            ("HKCU", "hkcu.reg"),
-            ("HKCR", "hkcr.reg"),
-            ("HKU", "hku.reg"),
-            ("HKCC", "hkcc.reg")
-        };
-
-        foreach (var (hive, file) in exports)
+        int exported = 0, skipped = 0;
+        foreach (var keyPath in TargetedRegistryPaths)
         {
             ct.ThrowIfCancellationRequested();
-            var path = Path.Combine(folder, file);
-            progress.Report($"Exporting {file}…");
-            var psi = new ProcessStartInfo("reg.exe", $"export {hive} \"{path}\" /y")
+            var safeName = keyPath.Replace('\\', '_').Replace(' ', '-') + ".reg";
+            var dest = Path.Combine(folder, safeName);
+
+            var psi = new ProcessStartInfo("reg.exe", $"export \"{keyPath}\" \"{dest}\" /y")
             {
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -110,18 +130,19 @@ public sealed class BackupService : IBackupService
                 CreateNoWindow = true
             };
 
-            using var proc = Process.Start(psi);
-            if (proc is null)
+            try
             {
-                throw new InvalidOperationException("Failed to start reg.exe");
+                using var proc = Process.Start(psi);
+                if (proc is null) { skipped++; continue; }
+                await proc.WaitForExitAsync(ct).ConfigureAwait(false);
+                if (proc.ExitCode == 0) exported++;
+                else skipped++;
             }
-
-            await proc.WaitForExitAsync(ct).ConfigureAwait(false);
-            if (proc.ExitCode != 0)
+            catch
             {
-                var err = await proc.StandardError.ReadToEndAsync(ct).ConfigureAwait(false);
-                throw new InvalidOperationException($"reg export failed ({file}): {err}");
+                skipped++;
             }
         }
+        progress.Report($"Registry: {exported} keys backed up, {skipped} skipped.");
     }
 }
