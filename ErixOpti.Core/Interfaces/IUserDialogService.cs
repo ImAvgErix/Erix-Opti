@@ -3,6 +3,5 @@ namespace ErixOpti.Core.Interfaces;
 public interface IUserDialogService
 {
     Task<bool> ConfirmBackupBeforeTweaksAsync();
-
-    Task<bool> ConfirmHighRiskTweakAsync(ITweak tweak);
+    Task<bool> ConfirmHighRiskAsync(string title, string message);
 }

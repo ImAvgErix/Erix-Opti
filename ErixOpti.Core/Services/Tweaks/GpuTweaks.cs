@@ -1,0 +1,24 @@
+using ErixOpti.Core.Helpers;
+using ErixOpti.Core.Models;
+using Microsoft.Win32;
+
+namespace ErixOpti.Core.Services.Tweaks;
+
+public static class GpuTweaks
+{
+    public static IReadOnlyList<TweakOperation> All =>
+    [
+        new() { Id = "gpu.mpo-off", Name = "MPO off (multi-monitor)", Category = "GPU", ShouldApply = hw => hw.HasMultiMonitor,
+            Apply = (p, _) => { p.Report("MPO off"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows\Dwm", "OverlayTestMode", 5); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows\Dwm", "OverlayTestMode"); return Task.CompletedTask; } },
+        new() { Id = "gpu.hags", Name = "HAGS config", Category = "GPU", ShouldApply = _ => true,
+            Apply = (p, _) => { var v = HwRef.Hw?.HasLowVram == true ? 1 : 2; p.Report($"HAGS={v}"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", v); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 2); return Task.CompletedTask; } },
+        new() { Id = "gpu.tdr-delay", Name = "TDR delay (multi-monitor)", Category = "GPU", ShouldApply = hw => hw.HasMultiMonitor,
+            Apply = (p, _) => { p.Report("TdrDelay=10"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "TdrDelay", 10); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "TdrDdiDelay", 10); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "TdrDelay"); RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "TdrDdiDelay"); return Task.CompletedTask; } },
+        new() { Id = "gpu.nv-shader", Name = "NVIDIA shader cache", Category = "GPU", ShouldApply = hw => hw.IsNvidiaGpu,
+            Apply = (p, _) => { p.Report("NVIDIA shader pre-cache"); RegistryTweakHelper.WriteDword(RegistryHive.CurrentUser, @"Software\NVIDIA Corporation\Global\NVTweak", "Gestalt", 1); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.CurrentUser, @"Software\NVIDIA Corporation\Global\NVTweak", "Gestalt"); return Task.CompletedTask; } },
+    ];
+}

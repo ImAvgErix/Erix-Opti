@@ -3,60 +3,49 @@ using ErixOpti.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+
 namespace ErixOpti;
 
 public sealed partial class MainWindow : Window
 {
-    private readonly WindowContext _windowContext;
-    private readonly UiLogSink _uiLogSink;
-    private bool _initialized;
+    private readonly WindowContext _wc;
+    private readonly UiLogSink _sink;
+    private bool _init;
 
-    public MainWindow(WindowContext windowContext, UiLogSink uiLogSink)
+    public MainWindow(WindowContext wc, UiLogSink sink)
     {
         InitializeComponent();
         Title = "ErixOpti";
         ExtendsContentIntoTitleBar = true;
-        _windowContext = windowContext;
-        _uiLogSink = uiLogSink;
-
+        _wc = wc; _sink = sink;
         Activated += OnActivated;
     }
 
-    private void OnActivated(object sender, WindowActivatedEventArgs args)
+    private void OnActivated(object sender, WindowActivatedEventArgs e)
     {
-        if (_initialized)
-        {
-            return;
-        }
-
-        _initialized = true;
-
-        _windowContext.XamlRoot = Content.XamlRoot;
-        _uiLogSink.Attach(DispatcherQueue);
-        RootNav.SelectedItem = RootNav.MenuItems[0];
-        Navigate("hardware");
+        if (_init) return; _init = true;
+        _wc.XamlRoot = Content.XamlRoot;
+        _sink.Attach(DispatcherQueue);
+        Nav.SelectedItem = Nav.MenuItems[0];
     }
 
-    private void OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void OnNavChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         if (args.SelectedItem is NavigationViewItem item && item.Tag is string tag)
-        {
             Navigate(tag);
-        }
     }
 
     private void Navigate(string tag)
     {
-        var services = App.AppHost.Services;
-        Page page = tag switch
+        var svc = App.AppHost.Services;
+        ContentFrame.Content = tag switch
         {
-            "hardware" => services.GetRequiredService<HardwarePage>(),
-            "optimizations" => services.GetRequiredService<OptimizationsPage>(),
-            "quick" => services.GetRequiredService<QuickToolsPage>(),
-            "log" => services.GetRequiredService<LogPage>(),
-            _ => services.GetRequiredService<HardwarePage>()
+            "hw" => svc.GetRequiredService<HardwarePage>(),
+            "opt" => svc.GetRequiredService<OptimizationsPage>(),
+            "dl" => svc.GetRequiredService<DownloadsPage>(),
+            "tools" => svc.GetRequiredService<ToolsPage>(),
+            "log" => svc.GetRequiredService<LogPage>(),
+            _ => svc.GetRequiredService<HardwarePage>()
         };
-
-        ContentFrame.Content = page;
     }
 }

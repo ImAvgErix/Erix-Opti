@@ -5,11 +5,6 @@ namespace ErixOpti.Views;
 
 public sealed partial class LogPage : Page
 {
-    public LogPage(LogViewModel viewModel)
-    {
-        ViewModel = viewModel;
-        InitializeComponent();
-    }
-
-    public LogViewModel ViewModel { get; }
+    public LogPage(LogViewModel vm) { VM = vm; InitializeComponent(); }
+    public LogViewModel VM { get; }
 }

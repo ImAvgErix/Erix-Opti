@@ -1,0 +1,44 @@
+<Page
+    x:Class="ErixOpti.Views.DownloadsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ani="using:CommunityToolkit.WinUI.Animations"
+    xmlns:views="using:ErixOpti.Views"
+    xmlns:vm="using:ErixOpti.Core.ViewModels"
+    x:DataType="views:DownloadsPage">
+    <ScrollViewer>
+        <StackPanel Padding="{StaticResource PagePadding}" Spacing="16" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
+            <TextBlock Style="{StaticResource PageTitle}" Text="Downloads" />
+            <TextBlock Style="{StaticResource PageSub}" Text="Runtimes, drivers, and tools — download and install in-app." />
+
+            <ItemsRepeater ItemsSource="{x:Bind VM.Items, Mode=OneWay}">
+                <ItemsRepeater.Layout><StackLayout Spacing="12" /></ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DownloadItemViewModel">
+                        <Border Style="{StaticResource GlassCard}">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="4">
+                                    <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind Item.Name}" />
+                                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" Text="{x:Bind Item.Description}" />
+                                    <TextBlock FontSize="11" Foreground="{StaticResource AppTextDimBrush}" Text="{x:Bind Item.Category}" />
+                                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind ProgressPercent, Mode=OneWay}" Width="200" HorizontalAlignment="Left"
+                                                 Visibility="{x:Bind views:DownloadsPage.ShowIf(State, 1), Mode=OneWay}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                    <Button Command="{x:Bind DownloadCommand}" Padding="16,8" CornerRadius="8" Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" FontWeight="SemiBold"
+                                            Content="{x:Bind views:DownloadsPage.BtnText(State), Mode=OneWay}" />
+                                    <Button Command="{x:Bind InstallCommand}" Padding="16,8" CornerRadius="8" Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}" Content="Install"
+                                            Visibility="{x:Bind views:DownloadsPage.ShowIf(State, 2), Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
