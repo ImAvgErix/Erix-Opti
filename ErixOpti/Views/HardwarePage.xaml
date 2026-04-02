@@ -1,0 +1,192 @@
+<Page
+    x:Class="ErixOpti.Views.HardwarePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:ErixOpti.Views"
+    x:DataType="views:HardwarePage"
+    mc:Ignorable="d">
+    <ScrollViewer Padding="{StaticResource PagePadding}">
+        <StackPanel
+            Spacing="16"
+            animations:Implicit.ShowAnimations="{StaticResource AppEntranceAnimations}">
+
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Hardware snapshot" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}"
+                       Text="Live WMI + registry data — refreshes every 5 seconds." />
+
+            <!-- Form factor + power -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="SYSTEM" />
+            <Border Style="{StaticResource GlassCardStyle}">
+                <Grid ColumnSpacing="24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock FontSize="12" Foreground="{StaticResource AppSubtleTextBrush}" Text="Form factor" />
+                        <TextBlock FontSize="16" FontWeight="SemiBold"
+                                   Text="{x:Bind ViewModel.Model.FormFactor, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock FontSize="12" Foreground="{StaticResource AppSubtleTextBrush}" Text="Power source" />
+                        <TextBlock FontSize="16" FontWeight="SemiBold"
+                                   Text="{x:Bind ViewModel.Model.PowerSource, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="4">
+                        <TextBlock FontSize="12" Foreground="{StaticResource AppSubtleTextBrush}" Text="Last refresh" />
+                        <TextBlock FontSize="16" FontWeight="SemiBold"
+                                   Text="{x:Bind ViewModel.Model.LastUpdated, Mode=OneWay}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- CPU -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="PROCESSOR" />
+            <controls:SettingsCard
+                Description="{x:Bind ViewModel.Model.CpuName, Mode=OneWay}"
+                Header="CPU"
+                HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Manufacturer: " />
+                        <Run Text="{x:Bind ViewModel.Model.CpuManufacturer, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Cores / threads: " />
+                        <Run Text="{x:Bind ViewModel.Model.CpuCores, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text=" / " />
+                        <Run Text="{x:Bind ViewModel.Model.CpuLogicalProcessors, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Clock (cur / max MHz): " />
+                        <Run Text="{x:Bind ViewModel.Model.CpuCurrentClockMhz, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text=" / " />
+                        <Run Text="{x:Bind ViewModel.Model.CpuMaxClockMhz, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock FontSize="13">
+                        <Run Text="Utilization: " Foreground="{StaticResource AppSubtleTextBrush}" />
+                        <Run Text="{x:Bind ViewModel.Model.CpuUtilizationPercent, Mode=OneWay}"
+                             Foreground="{StaticResource AppAccentCyanBrush}" FontWeight="SemiBold" />
+                        <Run Text="%" Foreground="{StaticResource AppAccentCyanBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- GPU -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="GRAPHICS" />
+            <controls:SettingsCard
+                Description="{x:Bind ViewModel.Model.GpuName, Mode=OneWay}"
+                Header="GPU"
+                HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Vendor: " />
+                        <Run Text="{x:Bind ViewModel.Model.PrimaryGpuVendor, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="VRAM: " />
+                        <Run Text="{x:Bind ViewModel.Model.GpuMemoryGb, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text=" GB" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Driver: " />
+                        <Run Text="{x:Bind ViewModel.Model.GpuDriverVersion, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text="  (" />
+                        <Run Text="{x:Bind ViewModel.Model.GpuDriverDate, Mode=OneWay}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                    <TextBlock FontSize="13">
+                        <Run Text="Utilization: " Foreground="{StaticResource AppSubtleTextBrush}" />
+                        <Run Text="{x:Bind ViewModel.Model.GpuUtilizationPercent, Mode=OneWay}"
+                             Foreground="{StaticResource AppAccentCyanBrush}" FontWeight="SemiBold" />
+                        <Run Text="%" Foreground="{StaticResource AppAccentCyanBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- Memory -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="MEMORY" />
+            <controls:SettingsCard Header="RAM" HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Total: " />
+                        <Run Text="{x:Bind ViewModel.Model.RamTotalGb, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text=" GB" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Available: " />
+                        <Run Text="{x:Bind ViewModel.Model.RamAvailableGb, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text=" GB" />
+                    </TextBlock>
+                    <TextBlock FontSize="13">
+                        <Run Text="Used: " Foreground="{StaticResource AppSubtleTextBrush}" />
+                        <Run Text="{x:Bind ViewModel.Model.RamUsedPercent, Mode=OneWay}"
+                             Foreground="{StaticResource AppAccentCyanBrush}" FontWeight="SemiBold" />
+                        <Run Text="%" Foreground="{StaticResource AppAccentCyanBrush}" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- Storage -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="STORAGE" />
+            <controls:SettingsCard
+                Description="{x:Bind ViewModel.Model.StorageSummary, Mode=OneWay}"
+                Header="Disks"
+                HeaderIcon="{x:Null}">
+                <StackPanel Spacing="4">
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="SSD boot volume: " />
+                        <Run Text="{x:Bind ViewModel.Model.HasSsdBootVolume, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- Motherboard -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="MOTHERBOARD" />
+            <controls:SettingsCard Header="Board &amp; BIOS" HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13"
+                               Text="{x:Bind ViewModel.Model.Motherboard, Mode=OneWay}" />
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="BIOS: " />
+                        <Run Text="{x:Bind ViewModel.Model.BiosVersion, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- Network -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="NETWORK" />
+            <controls:SettingsCard Header="Primary adapter" HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13"
+                               Text="{x:Bind ViewModel.Model.NetworkAdapter, Mode=OneWay}" />
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Speed: " />
+                        <Run Text="{x:Bind ViewModel.Model.NetworkSpeed, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+            <!-- OS -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="OPERATING SYSTEM" />
+            <controls:SettingsCard Header="Windows 11" HeaderIcon="{x:Null}">
+                <StackPanel Spacing="6">
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Build: " />
+                        <Run Text="{x:Bind ViewModel.Model.OsBuild, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.8" FontSize="13">
+                        <Run Text="Uptime: " />
+                        <Run Text="{x:Bind ViewModel.Model.Uptime, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+            </controls:SettingsCard>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

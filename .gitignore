@@ -1,0 +1,20 @@
+# Build outputs
+bin/
+obj/
+publish/
+AppPackages/
+ErixOpti/bin/
+ErixOpti/obj/
+ErixOpti/publish/
+ErixOpti/AppPackages/
+
+# Large binaries
+*.exe
+*.msix
+*.msixupload
+*.appx
+*.appxbundle
+
+# Temp / Logs
+*.log
+*.tmp

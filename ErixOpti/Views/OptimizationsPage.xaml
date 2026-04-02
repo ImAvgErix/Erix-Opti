@@ -1,0 +1,121 @@
+<Page
+    x:Class="ErixOpti.Views.OptimizationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ErixOpti.Core.ViewModels"
+    xmlns:views="using:ErixOpti.Views"
+    x:DataType="views:OptimizationsPage"
+    mc:Ignorable="d">
+    <ScrollViewer Padding="{StaticResource PagePadding}">
+        <StackPanel
+            Spacing="16"
+            animations:Implicit.ShowAnimations="{StaticResource AppEntranceAnimations}">
+
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Optimizations" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}"
+                       Text="Hardware-aware tweaks with automatic backup, risk labels, and full revert." />
+
+            <!-- Presets -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="PRESETS" />
+            <Border Style="{StaticResource GlassCardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock FontSize="13" Opacity="0.7"
+                               Text="Apply a curated group of tweaks with one click." />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Click="OnPresetClick" Tag="Gaming"
+                                Style="{StaticResource AccentButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE7FC;" FontSize="14" />
+                                <TextBlock Text="Gaming" />
+                            </StackPanel>
+                        </Button>
+                        <Button Click="OnPresetClick" Tag="Privacy">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE72E;" FontSize="14" />
+                                <TextBlock Text="Privacy" />
+                            </StackPanel>
+                        </Button>
+                        <Button Click="OnPresetClick" Tag="Balanced">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE9E9;" FontSize="14" />
+                                <TextBlock Text="Balanced" />
+                            </StackPanel>
+                        </Button>
+                        <Button Click="OnPresetClick" Tag="Extreme">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE7BA;" FontSize="14" />
+                                <TextBlock Text="Extreme" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Status -->
+            <Border Padding="12,8" CornerRadius="6"
+                    Background="#18FFFFFF"
+                    BorderBrush="{StaticResource AppGlassBorderBrush}"
+                    BorderThickness="1">
+                <TextBlock FontSize="13" Opacity="0.9"
+                           Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" />
+            </Border>
+
+            <!-- Tweak list -->
+            <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="ALL TWEAKS" />
+
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:TweakItemViewModel">
+                        <controls:SettingsCard
+                            Margin="0,0,0,8"
+                            Description="{x:Bind Tweak.Description, Mode=OneWay}"
+                            Header="{x:Bind Tweak.Name, Mode=OneWay}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon
+                                    Glyph="{x:Bind views:OptimizationsPage.RiskGlyph(Tweak.Risk), Mode=OneWay}"
+                                    Foreground="{x:Bind views:OptimizationsPage.RiskBrush(Tweak.Risk), Mode=OneWay}" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <StackPanel Spacing="8" MinWidth="200">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Spacing="2">
+                                        <TextBlock FontSize="11" Opacity="0.5" Text="Category" />
+                                        <TextBlock FontSize="12" Text="{x:Bind Tweak.Category, Mode=OneWay}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock FontSize="11" Opacity="0.5" Text="Risk" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Foreground="{x:Bind views:OptimizationsPage.RiskBrush(Tweak.Risk), Mode=OneWay}"
+                                            Text="{x:Bind Tweak.Risk, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock FontSize="11" Opacity="0.6">
+                                    <Run Text="{x:Bind views:OptimizationsPage.AppliedLabel(IsApplied), Mode=OneWay}" />
+                                    <Run Text="  ·  Fully reversible" />
+                                    <Run Text="{x:Bind views:OptimizationsPage.RebootLabel(Tweak.RequiresReboot), Mode=OneWay}" />
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button
+                                        Click="OnApplyClick"
+                                        Content="Apply"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                    <Button Click="OnRevertClick" Content="Revert" />
+                                </StackPanel>
+                            </StackPanel>
+                        </controls:SettingsCard>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

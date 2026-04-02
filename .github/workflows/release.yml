@@ -1,0 +1,59 @@
+name: Build and Release
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore ErixOpti.sln
+
+      - name: Build (Debug)
+        run: dotnet build ErixOpti.sln -c Debug --no-restore
+
+      - name: Publish single-file (Release)
+        run: >
+          dotnet publish ErixOpti/ErixOpti.csproj -c Release -r win-x64 --no-restore
+          -p:PublishSingleFile=true
+          -p:SelfContained=true
+          -p:WindowsAppSDKSelfContained=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish/singlefile
+
+      - name: Stage release assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          $exe = Get-ChildItem -Recurse -Filter "ErixOpti.exe" "publish/singlefile" | Select-Object -First 1
+          if ($exe) { Copy-Item -Force $exe.FullName "artifacts/ErixOpti.exe" }
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: erixopti-build
+          path: artifacts/**/*
+
+      - name: Create GitHub Release (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: ErixOpti v${{ github.run_number }}
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

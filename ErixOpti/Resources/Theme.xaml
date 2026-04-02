@@ -1,0 +1,81 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations">
+
+    <!-- Core palette -->
+    <Color x:Key="AppBackgroundColor">#0A0A0A</Color>
+    <Color x:Key="AppAccentCyan">#00B4FF</Color>
+    <Color x:Key="AppAccentBlue">#0078D7</Color>
+    <Color x:Key="AppSurfaceColor">#161616</Color>
+    <Color x:Key="AppCardColor">#1A1A1A</Color>
+
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}" />
+    <SolidColorBrush x:Key="AppAccentCyanBrush" Color="{StaticResource AppAccentCyan}" />
+    <SolidColorBrush x:Key="AppAccentBlueBrush" Color="{StaticResource AppAccentBlue}" />
+    <SolidColorBrush x:Key="AppSurfaceBrush" Color="{StaticResource AppSurfaceColor}" />
+    <SolidColorBrush x:Key="AppCardBrush" Color="{StaticResource AppCardColor}" />
+
+    <!-- Glassmorphism borders and overlays -->
+    <SolidColorBrush x:Key="AppGlassBorderBrush" Color="#10FFFFFF" />
+    <SolidColorBrush x:Key="AppGlassOverlayBrush" Color="#08FFFFFF" />
+    <SolidColorBrush x:Key="AppSubtleTextBrush" Color="#99FFFFFF" />
+
+    <!-- Risk level brushes -->
+    <SolidColorBrush x:Key="RiskLowBrush" Color="#2ECC71" />
+    <SolidColorBrush x:Key="RiskMediumBrush" Color="#F39C12" />
+    <SolidColorBrush x:Key="RiskHighBrush" Color="#E74C3C" />
+
+    <!-- Status brushes -->
+    <SolidColorBrush x:Key="AppliedBrush" Color="#2ECC71" />
+    <SolidColorBrush x:Key="NotAppliedBrush" Color="#99FFFFFF" />
+
+    <!-- CornerRadius constants -->
+    <CornerRadius x:Key="GlassCornerRadius">8</CornerRadius>
+    <Thickness x:Key="GlassBorderThickness">1</Thickness>
+    <Thickness x:Key="CardPadding">16</Thickness>
+    <Thickness x:Key="PagePadding">32,24,32,24</Thickness>
+
+    <!-- Glass card style for Border elements -->
+    <Style x:Key="GlassCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource AppCardBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AppGlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource GlassBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassCornerRadius}" />
+        <Setter Property="Padding" Value="{StaticResource CardPadding}" />
+    </Style>
+
+    <!-- Section header style -->
+    <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Opacity" Value="0.6" />
+        <Setter Property="CharacterSpacing" Value="60" />
+        <Setter Property="Margin" Value="0,8,0,4" />
+    </Style>
+
+    <!-- Page title style -->
+    <Style x:Key="PageTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource AppAccentCyanBrush}" />
+    </Style>
+
+    <!-- Page subtitle style -->
+    <Style x:Key="PageSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Opacity" Value="0.6" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <!-- Entrance animations -->
+    <animations:ImplicitAnimationSet x:Key="AppEntranceAnimations">
+        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.35" />
+        <animations:TranslationAnimation From="0,16,0" To="0" Duration="0:0:0.35" />
+    </animations:ImplicitAnimationSet>
+
+    <animations:ImplicitAnimationSet x:Key="AppFadeInAnimations">
+        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.25" />
+    </animations:ImplicitAnimationSet>
+
+</ResourceDictionary>
