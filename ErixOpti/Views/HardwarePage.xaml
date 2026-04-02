@@ -9,43 +9,55 @@
         <StackPanel Padding="{StaticResource PagePadding}" Spacing="16" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
             <TextBlock Style="{StaticResource PageTitle}" Text="Hardware" />
             <TextBlock Style="{StaticResource PageSub}" Text="System snapshot — detected at launch." />
-
             <Border Style="{StaticResource HeroCard}">
-                <StackPanel Spacing="4">
-                    <TextBlock FontSize="20" FontWeight="Bold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind VM.Model.PcName, Mode=OneWay}" />
-                    <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.OsEdition, Mode=OneWay}" /><Run Text="  ·  Build " /><Run Text="{x:Bind VM.Model.OsBuild, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.FormFactor, Mode=OneWay}" /></TextBlock>
-                </StackPanel>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="52" Height="52" CornerRadius="14" Background="#1500B4FF" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7F4;" FontSize="24" Foreground="{StaticResource AppAccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                        <TextBlock FontSize="20" FontWeight="Bold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind VM.Model.PcName, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.OsEdition, Mode=OneWay}" /><Run Text="  ·  Build " /><Run Text="{x:Bind VM.Model.OsBuild, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.FormFactor, Mode=OneWay}" /></TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
-
             <TextBlock Style="{StaticResource Section}" Text="PROCESSOR" />
             <Border Style="{StaticResource GlassCard}">
-                <StackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind VM.Model.CpuName, Mode=OneWay}" />
-                    <TextBlock Style="{StaticResource Label}"><Run Text="Cores " /><Run Text="{x:Bind VM.Model.CpuCores, Mode=OneWay}" /><Run Text=" / Threads " /><Run Text="{x:Bind VM.Model.CpuLogicalProcessors, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.CpuMaxClockMhz, Mode=OneWay}" /><Run Text=" MHz  ·  L3 " /><Run Text="{x:Bind VM.Model.CpuL3CacheKb, Mode=OneWay}" /><Run Text=" KB" /></TextBlock>
-                </StackPanel>
+                <Grid ColumnSpacing="14"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" CornerRadius="10" Background="#1500B4FF" VerticalAlignment="Top"><FontIcon Glyph="&#xE950;" FontSize="17" Foreground="{StaticResource AppAccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Style="{StaticResource Value}" Text="{x:Bind VM.Model.CpuName, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.CpuCores, Mode=OneWay}" /><Run Text="C / " /><Run Text="{x:Bind VM.Model.CpuLogicalProcessors, Mode=OneWay}" /><Run Text="T  ·  " /><Run Text="{x:Bind VM.Model.CpuMaxClockMhz, Mode=OneWay}" /><Run Text=" MHz  ·  L3 " /><Run Text="{x:Bind VM.L3Display, Mode=OneWay}" /></TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
-
             <TextBlock Style="{StaticResource Section}" Text="GRAPHICS" />
             <Border Style="{StaticResource GlassCard}">
-                <StackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind VM.Model.GpuName, Mode=OneWay}" />
-                    <TextBlock Style="{StaticResource Label}"><Run Text="VRAM " /><Run Text="{x:Bind VM.Model.GpuMemoryGb, Mode=OneWay}" /><Run Text=" GB  ·  Driver " /><Run Text="{x:Bind VM.Model.GpuDriverVersion, Mode=OneWay}" /></TextBlock>
-                </StackPanel>
+                <Grid ColumnSpacing="14"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" CornerRadius="10" Background="#15FF6B00" VerticalAlignment="Top"><FontIcon Glyph="&#xE7F8;" FontSize="17" Foreground="#FF6B00" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Style="{StaticResource Value}" Text="{x:Bind VM.Model.GpuName, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.PrimaryGpuVendor, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.GpuMemoryGb, Mode=OneWay}" /><Run Text=" GB  ·  Driver " /><Run Text="{x:Bind VM.Model.GpuDriverVersion, Mode=OneWay}" /></TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
-
             <TextBlock Style="{StaticResource Section}" Text="MEMORY" />
             <Border Style="{StaticResource GlassCard}">
-                <StackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BigValue}"><Run Text="{x:Bind VM.Model.RamTotalGb, Mode=OneWay}" /><Run Text=" GB" /></TextBlock>
-                    <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.RamType, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.RamSpeedMhz, Mode=OneWay}" /><Run Text=" MHz  ·  " /><Run Text="{x:Bind VM.Model.RamSlotsUsed, Mode=OneWay}" /><Run Text=" sticks" /></TextBlock>
-                </StackPanel>
+                <Grid ColumnSpacing="14"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" CornerRadius="10" Background="#158B5CF6" VerticalAlignment="Top"><FontIcon Glyph="&#xECAD;" FontSize="17" Foreground="#8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Style="{StaticResource BigValue}"><Run Text="{x:Bind VM.Model.RamTotalGb, Mode=OneWay}" /><Run Text=" GB" /></TextBlock>
+                        <TextBlock Style="{StaticResource Label}"><Run Text="{x:Bind VM.Model.RamType, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind VM.Model.RamSpeedMhz, Mode=OneWay}" /><Run Text=" MHz  ·  " /><Run Text="{x:Bind VM.Model.RamSlotsUsed, Mode=OneWay}" /><Run Text=" sticks" /></TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
-
             <TextBlock Style="{StaticResource Section}" Text="STORAGE" />
             <Border Style="{StaticResource GlassCard}">
-                <TextBlock Style="{StaticResource Label}" Text="{x:Bind VM.Model.StorageSummary, Mode=OneWay}" TextWrapping="Wrap" />
+                <Grid ColumnSpacing="14"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="38" Height="38" CornerRadius="10" Background="#1534D399" VerticalAlignment="Top"><FontIcon Glyph="&#xEDA2;" FontSize="17" Foreground="#34D399" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+                    <TextBlock Grid.Column="1" Style="{StaticResource Label}" Text="{x:Bind VM.Model.StorageSummary, Mode=OneWay}" TextWrapping="Wrap" />
+                </Grid>
             </Border>
-
             <TextBlock Style="{StaticResource Section}" Text="PLATFORM" />
             <Border Style="{StaticResource GlassCard}">
                 <StackPanel Spacing="6">
@@ -55,7 +67,6 @@
                     <TextBlock Style="{StaticResource Label}"><Run Text="Monitors: " /><Run Text="{x:Bind VM.Model.MonitorCount, Mode=OneWay}" /><Run Text="  ·  USB: " /><Run Text="{x:Bind VM.Model.UsbDeviceCount, Mode=OneWay}" /></TextBlock>
                 </StackPanel>
             </Border>
-
             <Button Click="OnExport" Margin="0,8,0,0" Padding="16,8" CornerRadius="8" Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}">
                 <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE9F9;" FontSize="14" /><TextBlock Text="Export report" /></StackPanel>
             </Button>

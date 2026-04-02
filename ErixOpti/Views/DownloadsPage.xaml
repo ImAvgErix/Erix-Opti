@@ -9,30 +9,26 @@
     <ScrollViewer>
         <StackPanel Padding="{StaticResource PagePadding}" Spacing="16" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
             <TextBlock Style="{StaticResource PageTitle}" Text="Downloads" />
-            <TextBlock Style="{StaticResource PageSub}" Text="Runtimes, drivers, and tools — download and install in-app." />
-
+            <TextBlock Style="{StaticResource PageSub}" Text="Runtimes, drivers, and tools." />
             <ItemsRepeater ItemsSource="{x:Bind VM.Items, Mode=OneWay}">
-                <ItemsRepeater.Layout><StackLayout Spacing="12" /></ItemsRepeater.Layout>
+                <ItemsRepeater.Layout><StackLayout Spacing="8" /></ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="vm:DownloadItemViewModel">
-                        <Border Style="{StaticResource GlassCard}">
-                            <Grid ColumnSpacing="16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Spacing="4">
+                        <Border Style="{StaticResource GlassCard}" Padding="16,14">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <StackPanel Spacing="3" VerticalAlignment="Center">
                                     <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind Item.Name}" />
                                     <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" Text="{x:Bind Item.Description}" />
                                     <TextBlock FontSize="11" Foreground="{StaticResource AppTextDimBrush}" Text="{x:Bind Item.Category}" />
-                                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind ProgressPercent, Mode=OneWay}" Width="200" HorizontalAlignment="Left"
-                                                 Visibility="{x:Bind views:DownloadsPage.ShowIf(State, 1), Mode=OneWay}" />
+                                    <TextBlock FontSize="11" Foreground="{StaticResource ErrorBrush}" Text="{x:Bind ErrorText, Mode=OneWay}" />
+                                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind ProgressPercent, Mode=OneWay}" Width="220" HorizontalAlignment="Left" />
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                    <Button Command="{x:Bind DownloadCommand}" Padding="16,8" CornerRadius="8" Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" FontWeight="SemiBold"
-                                            Content="{x:Bind views:DownloadsPage.BtnText(State), Mode=OneWay}" />
-                                    <Button Command="{x:Bind InstallCommand}" Padding="16,8" CornerRadius="8" Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}" Content="Install"
-                                            Visibility="{x:Bind views:DownloadsPage.ShowIf(State, 2), Mode=OneWay}" />
+                                <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                                    <Button Command="{x:Bind DownloadCommand}" Padding="14,8" CornerRadius="8" FontWeight="SemiBold"
+                                            Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" Content="Download" />
+                                    <Button Command="{x:Bind InstallCommand}" Padding="14,8" CornerRadius="8"
+                                            Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}" Content="Install" />
                                 </StackPanel>
                             </Grid>
                         </Border>

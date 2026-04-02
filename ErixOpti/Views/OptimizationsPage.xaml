@@ -9,25 +9,21 @@
         <StackPanel Padding="{StaticResource PagePadding}" Spacing="16" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
             <TextBlock Style="{StaticResource PageTitle}" Text="Optimize" />
             <TextBlock Style="{StaticResource PageSub}" Text="One-click hardware-aware optimization with automatic backup." />
-
             <Border Style="{StaticResource HeroCard}">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                <StackPanel Spacing="20" HorizontalAlignment="Center">
                     <TextBlock Style="{StaticResource Label}" HorizontalAlignment="Center" Text="{x:Bind VM.HardwareSummary, Mode=OneWay}" />
                     <Button Command="{x:Bind VM.AutoOptimizeCommand}" IsEnabled="{x:Bind VM.IsNotRunning, Mode=OneWay}"
-                            HorizontalAlignment="Center" Padding="32,14" CornerRadius="8"
-                            Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" FontWeight="Bold" FontSize="15">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <FontIcon Glyph="&#xE945;" FontSize="18" />
-                            <TextBlock Text="Auto Optimize" FontWeight="Bold" FontSize="15" />
-                        </StackPanel>
+                            HorizontalAlignment="Center" Padding="36,16" CornerRadius="10"
+                            Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" FontWeight="Bold" FontSize="16">
+                        <StackPanel Orientation="Horizontal" Spacing="10"><FontIcon Glyph="&#xE945;" FontSize="20" /><TextBlock Text="Auto Optimize" FontWeight="Bold" FontSize="16" /></StackPanel>
                     </Button>
-                    <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind VM.ProgressPercent, Mode=OneWay}" Width="400"
-                                 Visibility="{x:Bind VM.IsRunning, Mode=OneWay}" />
-                    <TextBlock Style="{StaticResource Label}" HorizontalAlignment="Center" Text="{x:Bind VM.CurrentStep, Mode=OneWay}" />
+                    <StackPanel Spacing="8" Visibility="{x:Bind VM.IsRunning, Mode=OneWay}">
+                        <ProgressBar Style="{StaticResource AccentProgress}" Value="{x:Bind VM.ProgressPercent, Mode=OneWay}" Width="440" />
+                        <TextBlock Style="{StaticResource Label}" HorizontalAlignment="Center" FontWeight="SemiBold" Text="{x:Bind VM.CurrentStep, Mode=OneWay}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
-
-            <Border Style="{StaticResource GlassCard}" Padding="16,12">
+            <Border Style="{StaticResource GlassCard}" Padding="16,14">
                 <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" Text="{x:Bind VM.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
             </Border>
         </StackPanel>

@@ -18,3 +18,9 @@ ErixOpti/AppPackages/
 # Temp / Logs
 *.log
 *.tmp
+
+# Next.js (web/)
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/

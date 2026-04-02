@@ -4,23 +4,24 @@
     xmlns:animations="using:CommunityToolkit.WinUI.Animations">
 
     <Color x:Key="AppBg">#09090B</Color>
-    <Color x:Key="AppSurface">#111113</Color>
-    <Color x:Key="AppCard">#141416</Color>
+    <Color x:Key="AppSurface">#0F0F11</Color>
+    <Color x:Key="AppCard">#131316</Color>
     <Color x:Key="AppAccent">#00B4FF</Color>
-    <Color x:Key="AppBorder">#12FFFFFF</Color>
-    <Color x:Key="TextPrimary">#F0F0F0</Color>
-    <Color x:Key="TextSecondary">#8B8B8B</Color>
-    <Color x:Key="TextDim">#555555</Color>
+    <Color x:Key="AppBorder">#10FFFFFF</Color>
+    <Color x:Key="AppBorderMed">#1CFFFFFF</Color>
+    <Color x:Key="TextPrimary">#EAEAEA</Color>
+    <Color x:Key="TextSecondary">#7A7A7A</Color>
+    <Color x:Key="TextDim">#484848</Color>
 
     <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBg}" />
     <SolidColorBrush x:Key="AppSurfaceBrush" Color="{StaticResource AppSurface}" />
     <SolidColorBrush x:Key="AppCardBrush" Color="{StaticResource AppCard}" />
     <SolidColorBrush x:Key="AppAccentCyanBrush" Color="{StaticResource AppAccent}" />
     <SolidColorBrush x:Key="AppGlassBorderBrush" Color="{StaticResource AppBorder}" />
+    <SolidColorBrush x:Key="AppBorderMedBrush" Color="{StaticResource AppBorderMed}" />
     <SolidColorBrush x:Key="AppTextPrimaryBrush" Color="{StaticResource TextPrimary}" />
     <SolidColorBrush x:Key="AppTextSecondaryBrush" Color="{StaticResource TextSecondary}" />
     <SolidColorBrush x:Key="AppTextDimBrush" Color="{StaticResource TextDim}" />
-
     <SolidColorBrush x:Key="SuccessBrush" Color="#34D399" />
     <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#F87171" />
@@ -36,27 +37,24 @@
         <Setter Property="CornerRadius" Value="{StaticResource CardRadius}" />
         <Setter Property="Padding" Value="{StaticResource CardPadding}" />
     </Style>
-
     <Style x:Key="HeroCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource AppSurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource AppGlassBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource AppBorderMedBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="{StaticResource CardRadius}" />
         <Setter Property="Padding" Value="28,24" />
     </Style>
-
     <Style x:Key="PageTitle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="32" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource AppTextPrimaryBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
     </Style>
-
     <Style x:Key="PageSub" TargetType="TextBlock">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{StaticResource AppTextSecondaryBrush}" />
         <Setter Property="Margin" Value="0,0,0,12" />
     </Style>
-
     <Style x:Key="Section" TargetType="TextBlock">
         <Setter Property="FontSize" Value="11" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -64,38 +62,32 @@
         <Setter Property="CharacterSpacing" Value="80" />
         <Setter Property="Margin" Value="0,20,0,8" />
     </Style>
-
     <Style x:Key="Label" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="{StaticResource AppTextSecondaryBrush}" />
     </Style>
-
     <Style x:Key="Value" TargetType="TextBlock">
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource AppTextPrimaryBrush}" />
     </Style>
-
     <Style x:Key="BigValue" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontSize" Value="26" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource AppAccentCyanBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
     </Style>
-
     <Style x:Key="AccentProgress" TargetType="ProgressBar">
         <Setter Property="Foreground" Value="{StaticResource AppAccentCyanBrush}" />
-        <Setter Property="Background" Value="#20FFFFFF" />
-        <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="Height" Value="6" />
+        <Setter Property="Background" Value="#15FFFFFF" />
+        <Setter Property="CornerRadius" Value="3" />
+        <Setter Property="Height" Value="5" />
     </Style>
-
     <animations:ImplicitAnimationSet x:Key="Entrance">
         <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.4" />
-        <animations:TranslationAnimation From="0,24,0" To="0" Duration="0:0:0.4" />
+        <animations:TranslationAnimation From="0,20,0" To="0" Duration="0:0:0.4" />
     </animations:ImplicitAnimationSet>
-
     <animations:ImplicitAnimationSet x:Key="FadeIn">
         <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.25" />
     </animations:ImplicitAnimationSet>
-
 </ResourceDictionary>
