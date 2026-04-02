@@ -40,17 +40,11 @@ public partial class App : Application
                 s.AddSingleton<IHardwareService, HardwareService>();
                 s.AddSingleton<IBackupService, BackupService>();
                 s.AddSingleton<IAutoOptimizeEngine, AutoOptimizeEngine>();
-                s.AddSingleton<IDownloadManager, DownloadManager>();
                 s.AddSingleton<HardwareViewModel>();
                 s.AddSingleton<OptimizationsViewModel>();
-                s.AddSingleton<DownloadsViewModel>();
-                s.AddSingleton<ToolsViewModel>();
                 s.AddSingleton<MainWindow>();
                 s.AddTransient<HardwarePage>();
                 s.AddTransient<OptimizationsPage>();
-                s.AddTransient<DownloadsPage>();
-                s.AddTransient<ToolsPage>();
-                s.AddTransient<LogPage>();
             }).Build();
 
         await AppHost.Services.GetRequiredService<IHardwareService>().StartAsync();

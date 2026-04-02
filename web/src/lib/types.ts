@@ -1,18 +1,45 @@
-export type NavId = "overview" | "optimize" | "downloads" | "tools";
+export type TweakStatus = "applied" | "not_applied" | "partial" | "unknown";
 
-export type CatalogItem = {
+export type TweakCategory =
+  | "Input"
+  | "System"
+  | "Memory"
+  | "Gaming"
+  | "Privacy"
+  | "Explorer"
+  | "Visual"
+  | "Storage"
+  | "Services"
+  | "Power"
+  | "GPU"
+  | "Network"
+  | "Cleanup";
+
+export type TweakItem = {
   id: string;
   name: string;
+  category: TweakCategory;
   description: string;
-  category: string;
-  direct: boolean;
+  status: TweakStatus;
+  conditional?: string;
 };
 
-export type PlanPayload = {
-  source?: string;
-  tweakCount?: number;
-  categories?: { name: string; count: number }[];
-  notes?: string;
+export type HardwareSummary = {
+  pcName: string;
+  os: string;
+  formFactor: string;
+  cpu: string;
+  cpuDetail: string;
+  gpu: string;
+  gpuDetail: string;
+  ram: string;
+  ramDetail: string;
+  storage: string;
+  storageDetail: string;
+  motherboard: string;
+  network: string;
+  monitors: number;
+  usbDevices: number;
 };
 
 export type OptimizePayload = {
@@ -24,9 +51,9 @@ export type OptimizePayload = {
   steps?: string[];
 };
 
-export type ToolResult = {
+export type PlanPayload = {
   source?: string;
-  ok?: boolean;
-  message?: string;
-  details?: string[];
+  tweakCount?: number;
+  categories?: { name: string; count: number }[];
+  notes?: string;
 };

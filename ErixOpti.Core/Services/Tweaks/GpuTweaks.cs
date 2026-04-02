@@ -20,5 +20,14 @@ public static class GpuTweaks
         new() { Id = "gpu.nv-shader", Name = "NVIDIA shader cache", Category = "GPU", ShouldApply = hw => hw.IsNvidiaGpu,
             Apply = (p, _) => { p.Report("NVIDIA shader pre-cache"); RegistryTweakHelper.WriteDword(RegistryHive.CurrentUser, @"Software\NVIDIA Corporation\Global\NVTweak", "Gestalt", 1); return Task.CompletedTask; },
             Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.CurrentUser, @"Software\NVIDIA Corporation\Global\NVTweak", "Gestalt"); return Task.CompletedTask; } },
+        new() { Id = "gpu.nv-pstate", Name = "NVIDIA P-State 0 (max perf)", Category = "GPU", ShouldApply = hw => hw.IsNvidiaGpu,
+            Apply = (p, _) => { p.Report("NVIDIA prefer max performance"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DisableDynamicPstate", 1); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000", "DisableDynamicPstate"); return Task.CompletedTask; } },
+        new() { Id = "gpu.dwm-vblank", Name = "DWM VBlank optimized", Category = "GPU", ShouldApply = _ => true,
+            Apply = (p, _) => { p.Report("DWM VBlank disable wait"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows\Dwm", "DisableFlipWaitOverride", 1); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows\Dwm", "DisableFlipWaitOverride"); return Task.CompletedTask; } },
+        new() { Id = "gpu.game-sched", Name = "GPU game scheduling priority", Category = "GPU", ShouldApply = _ => true,
+            Apply = (p, _) => { p.Report("GPU scheduling priority 8"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games", "GPU Priority", 8); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games", "GPU Priority", 0); return Task.CompletedTask; } },
     ];
 }

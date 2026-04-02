@@ -12,7 +12,9 @@ public static class ServiceTweaks
         "WdiServiceHost","WdiSystemHost","AxInstSV","DiagTrack","PcaSvc",
         "WalletService","tzautoupdate","PhoneSvc","seclogon","TabletInputService",
         "SmsRouter","icssvc","MapsBroker","WpnService","PushToInstall",
-        "WaaSMedicSvc","WarpJITSvc"
+        "WaaSMedicSvc","WarpJITSvc","wisvc","dmwappushservice","RemoteRegistry",
+        "SharedAccess","TrkWks","WMPNetworkSvc","AJRouter","ALG",
+        "BITS","CertPropSvc","diagnosticshub.standardcollector.service"
     ];
 
     public static IReadOnlyList<TweakOperation> All
@@ -37,6 +39,13 @@ public static class ServiceTweaks
                 ShouldApply = _ => true,
                 Apply = async (p, ct) => { p.Report("Bluetooth → Manual"); await ProcessRunner.RunAsync("sc.exe", "config bthserv start= demand", false, null, ct); },
                 Revert = async (p, ct) => { await ProcessRunner.RunAsync("sc.exe", "config bthserv start= auto", false, null, ct); }
+            });
+            ops.Add(new TweakOperation
+            {
+                Id = "svc.memcompress", Name = "Memory compression off", Category = "Services",
+                ShouldApply = hw => hw.HasHighRam,
+                Apply = async (p, ct) => { p.Report("Disable memory compression"); await ProcessRunner.RunAsync("powershell.exe", "-NoProfile -Command \"Disable-MMAgent -MemoryCompression\"", false, null, ct); },
+                Revert = async (p, ct) => { await ProcessRunner.RunAsync("powershell.exe", "-NoProfile -Command \"Enable-MMAgent -MemoryCompression\"", false, null, ct); }
             });
             return ops;
         }

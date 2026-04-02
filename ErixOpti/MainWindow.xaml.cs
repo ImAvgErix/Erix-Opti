@@ -42,9 +42,6 @@ public sealed partial class MainWindow : Window
         {
             "hw" => svc.GetRequiredService<HardwarePage>(),
             "opt" => svc.GetRequiredService<OptimizationsPage>(),
-            "dl" => svc.GetRequiredService<DownloadsPage>(),
-            "tools" => svc.GetRequiredService<ToolsPage>(),
-            "log" => svc.GetRequiredService<LogPage>(),
             _ => svc.GetRequiredService<HardwarePage>()
         };
     }
