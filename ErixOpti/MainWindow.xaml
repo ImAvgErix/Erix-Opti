@@ -10,39 +10,12 @@
         <media:MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
     <Grid Background="{StaticResource AppBackgroundBrush}">
-        <NavigationView
-            x:Name="Nav"
-            IsBackButtonVisible="Collapsed"
-            IsSettingsVisible="False"
-            PaneDisplayMode="LeftCompact"
-            IsPaneOpen="False"
-            OpenPaneLength="200"
-            CompactPaneLength="52"
-            SelectionChanged="OnNavChanged">
-            <NavigationView.PaneHeader>
-                <StackPanel Margin="8,12,0,8" Spacing="2">
-                    <TextBlock Text="ErixOpti" FontSize="15" FontWeight="Bold"
-                               Foreground="{StaticResource AppAccentCyanBrush}" />
-                </StackPanel>
-            </NavigationView.PaneHeader>
-            <NavigationView.Resources>
-                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
-            </NavigationView.Resources>
-            <NavigationView.MenuItems>
-                <NavigationViewItem Content="Hardware" Tag="hw">
-                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE964;" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Optimize" Tag="opt">
-                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE9D9;" /></NavigationViewItem.Icon>
-                </NavigationViewItem>
-            </NavigationView.MenuItems>
-            <Frame x:Name="ContentFrame">
-                <Frame.ContentTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromHorizontalOffset="40" FromVerticalOffset="0" />
-                    </TransitionCollection>
-                </Frame.ContentTransitions>
-            </Frame>
-        </NavigationView>
+        <Frame x:Name="ContentFrame">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="40" FromVerticalOffset="0" />
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>
     </Grid>
 </Window>

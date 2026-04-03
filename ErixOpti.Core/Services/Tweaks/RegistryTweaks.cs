@@ -22,6 +22,13 @@ public static class RegistryTweaks
         {
             Id = "reg.priority-sep", Name = "Win32PrioritySeparation", Category = "System",
             ShouldApply = _ => true,
+            TryGetAppliedState = hw =>
+            {
+                if (!RegistryTweakHelper.TryReadDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\PriorityControl", "Win32PrioritySeparation", out var cur))
+                    return false;
+                var want = hw.IsAmdCpu ? 0x28 : 0x26;
+                return cur == want;
+            },
             Apply = (p, _) => { var v = HwRef.Hw?.IsAmdCpu == true ? 0x28 : 0x26; p.Report($"PrioritySeparation=0x{v:X2}"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\PriorityControl", "Win32PrioritySeparation", v); return Task.CompletedTask; },
             Revert = (p, _) => { RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\PriorityControl", "Win32PrioritySeparation", 0x02); return Task.CompletedTask; }
         },
@@ -90,6 +97,12 @@ public static class RegistryTweaks
     private static TweakOperation D(string id, string name, string cat, Func<HardwareInfo, bool> cond, RegistryHive hive, string key, string val, int apply, int revert) => new()
     {
         Id = id, Name = name, Category = cat, ShouldApply = cond,
+        TryGetAppliedState = _ =>
+        {
+            if (!RegistryTweakHelper.TryReadDword(hive, key, val, out var cur))
+                return false;
+            return cur == apply;
+        },
         Apply = (p, _) => { p.Report(name); RegistryTweakHelper.WriteDword(hive, key, val, apply); return Task.CompletedTask; },
         Revert = (p, _) => { p.Report($"Revert {name}"); if (revert == -1) RegistryTweakHelper.DeleteValue(hive, key, val); else RegistryTweakHelper.WriteDword(hive, key, val, revert); return Task.CompletedTask; }
     };

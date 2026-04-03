@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ErixOpti.Core.Interfaces;
@@ -13,13 +14,21 @@ public sealed partial class OptimizationsViewModel : ObservableObject
     private readonly IHardwareService _hw;
 
     public OptimizationsViewModel(IAutoOptimizeEngine engine, IBackupService backup, IHardwareService hw)
-    { _engine = engine; _backup = backup; _hw = hw; }
+    {
+        _engine = engine;
+        _backup = backup;
+        _hw = hw;
+        TweakCategories = new ObservableCollection<TweakCategoryVm>();
+    }
+
+    public ObservableCollection<TweakCategoryVm> TweakCategories { get; }
 
     [ObservableProperty] private string _statusMessage = "Ready to optimize.";
     [ObservableProperty] private string _currentStep = "";
     [ObservableProperty] private double _progressPercent;
     [ObservableProperty] private bool _isRunning;
     [ObservableProperty] private string _hardwareSummary = "";
+    [ObservableProperty] private string _tweakStatsLine = "";
 
     public bool IsNotRunning => !IsRunning;
     partial void OnIsRunningChanged(bool value) => OnPropertyChanged(nameof(IsNotRunning));
@@ -28,7 +37,21 @@ public sealed partial class OptimizationsViewModel : ObservableObject
     {
         var h = _hw.Current;
         HardwareSummary = $"{h.CpuName}  ·  {h.GpuName}  ·  {h.RamTotalGb:0.#} GB RAM";
+        RefreshTweakList();
     }
+
+    public void RefreshTweakList()
+    {
+        var h = _hw.Current;
+        TweakListBuilder.Rebuild(TweakCategories, h);
+        var (active, eligible, total) = TweakListBuilder.CountSummary(h);
+        TweakStatsLine = eligible > 0
+            ? $"{active} of {eligible} detectable tweaks already active  ·  {total} total in catalog"
+            : $"{total} tweaks in catalog";
+    }
+
+    [RelayCommand]
+    private void RefreshTweakStatuses() => RefreshTweakList();
 
     [RelayCommand]
     private async Task AutoOptimizeAsync()
@@ -56,6 +79,10 @@ public sealed partial class OptimizationsViewModel : ObservableObject
             ProgressPercent = 100;
         }
         catch (Exception ex) { StatusMessage = $"Error: {ex.Message}"; }
-        finally { IsRunning = false; }
+        finally
+        {
+            IsRunning = false;
+            RefreshTweakList();
+        }
     }
 }

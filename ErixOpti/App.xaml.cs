@@ -43,8 +43,7 @@ public partial class App : Application
                 s.AddSingleton<HardwareViewModel>();
                 s.AddSingleton<OptimizationsViewModel>();
                 s.AddSingleton<MainWindow>();
-                s.AddTransient<HardwarePage>();
-                s.AddTransient<OptimizationsPage>();
+                s.AddTransient<DashboardPage>();
             }).Build();
 
         await AppHost.Services.GetRequiredService<IHardwareService>().StartAsync();

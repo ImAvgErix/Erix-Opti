@@ -26,23 +26,6 @@ public sealed partial class MainWindow : Window
         if (_init) return; _init = true;
         _wc.XamlRoot = Content.XamlRoot;
         _sink.Attach(DispatcherQueue);
-        Nav.SelectedItem = Nav.MenuItems[0];
-    }
-
-    private void OnNavChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    {
-        if (args.SelectedItem is NavigationViewItem item && item.Tag is string tag)
-            Navigate(tag);
-    }
-
-    private void Navigate(string tag)
-    {
-        var svc = App.AppHost.Services;
-        ContentFrame.Content = tag switch
-        {
-            "hw" => svc.GetRequiredService<HardwarePage>(),
-            "opt" => svc.GetRequiredService<OptimizationsPage>(),
-            _ => svc.GetRequiredService<HardwarePage>()
-        };
+        ContentFrame.Content = App.AppHost.Services.GetRequiredService<DashboardPage>();
     }
 }

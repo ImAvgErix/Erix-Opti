@@ -8,4 +8,7 @@ public sealed class TweakOperation
     public required Func<HardwareInfo, bool> ShouldApply { get; init; }
     public required Func<IProgress<string>, CancellationToken, Task> Apply { get; init; }
     public required Func<IProgress<string>, CancellationToken, Task> Revert { get; init; }
+
+    /// <summary>True = tweak already matches optimized state, false = not, null = cannot determine (run actions, power shell tweaks, etc.).</summary>
+    public Func<HardwareInfo, bool?>? TryGetAppliedState { get; init; }
 }

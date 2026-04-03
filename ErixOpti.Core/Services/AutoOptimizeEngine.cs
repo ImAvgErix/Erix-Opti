@@ -1,6 +1,5 @@
 using ErixOpti.Core.Interfaces;
 using ErixOpti.Core.Models;
-using ErixOpti.Core.Services.Tweaks;
 
 namespace ErixOpti.Core.Services;
 
@@ -18,14 +17,7 @@ public sealed class AutoOptimizeEngine : IAutoOptimizeEngine
     public Task<OptimizePlan> BuildPlanAsync(CancellationToken ct)
     {
         var info = _hw.Current;
-        HwRef.Hw = info;
-        var all = new List<TweakOperation>();
-        all.AddRange(RegistryTweaks.All);
-        all.AddRange(ServiceTweaks.All);
-        all.AddRange(PowerTweaks.All);
-        all.AddRange(GpuTweaks.All);
-        all.AddRange(NetworkTweaks.All);
-        all.AddRange(CleanupTweaks.All);
+        var all = TweakCatalog.All(info);
         return Task.FromResult(new OptimizePlan { Operations = all.Where(t => t.ShouldApply(info)).ToList() });
     }
 
