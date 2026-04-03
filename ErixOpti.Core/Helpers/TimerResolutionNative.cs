@@ -50,7 +50,7 @@ public static class TimerResolutionNative
         return true;
     }
 
-    /// <summary>Coarse measurement of effective sleep granularity using QPC (similar spirit to TimerResolution tooling).</summary>
+    /// <summary>Coarse measurement of effective <c>Sleep(1)</c> duration using the query performance counter.</summary>
     public static double MeasureSleepGranularityMs(int samples = 96)
     {
         if (samples < 8)

@@ -3,7 +3,7 @@ using System.Text;
 namespace ErixOpti.Core.Helpers;
 
 /// <summary>
-/// Runs commands with TrustedInstaller when a launcher is available: MinSudo, NirSoft AdvancedRun (/RunAs 8), ExecTI/RunAsTI, or plain elevated cmd.
+/// Runs commands under TrustedInstaller when a bundled helper supports it; otherwise uses the current elevated admin token.
 /// </summary>
 public static class TrustedInstallerHelper
 {
@@ -59,17 +59,17 @@ public static class TrustedInstallerHelper
             return await RunViaAdvancedRunTrustedInstallerAsync(adv, commandLine, progress, ct).ConfigureAwait(false);
         }
 
-        var execTi = BundledToolResolver.ResolveExecTiLauncher();
-        if (execTi is not null)
+        var tiScript = BundledToolResolver.ResolveTrustedInstallerLauncherScript();
+        if (tiScript is not null)
         {
-            if (execTi.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            if (tiScript.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
             {
-                return await ProcessRunner.RunAsync(execTi, commandLine, false, progress, ct).ConfigureAwait(false);
+                return await ProcessRunner.RunAsync(tiScript, commandLine, false, progress, ct).ConfigureAwait(false);
             }
 
-            if (execTi.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
+            if (tiScript.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase))
             {
-                return await ProcessRunner.RunAsync("cmd.exe", $"/c \"\"{execTi}\"\" {commandLine}", false, progress, ct)
+                return await ProcessRunner.RunAsync("cmd.exe", $"/c \"\"{tiScript}\"\" {commandLine}", false, progress, ct)
                     .ConfigureAwait(false);
             }
         }
@@ -114,6 +114,6 @@ public static class TrustedInstallerHelper
     public static bool HasTrustedInstallerLauncher() =>
         ResolveMinSudoPath() is not null ||
         BundledToolResolver.ResolveAdvancedRun() is not null ||
-        BundledToolResolver.ResolveExecTiLauncher() is not null ||
+        BundledToolResolver.ResolveTrustedInstallerLauncherScript() is not null ||
         ResolveRunAsTiCmdPath() is not null;
 }

@@ -138,7 +138,7 @@ public static class ExtremeTweaks
                         ct)
                     .ConfigureAwait(false);
 
-                p.Report("Defender: capability removal (admin, then TrustedInstaller if bundled)");
+                p.Report("Defender: capability removal (admin, then TrustedInstaller helper if present)");
                 await RunPowerShellScriptAsync(
                         """
                         Get-WindowsCapability -Online -EA SilentlyContinue |
@@ -186,7 +186,7 @@ public static class ExtremeTweaks
                 var defenderRemover = BundledToolResolver.ResolveDefenderRemover();
                 if (defenderRemover is not null)
                 {
-                    p.Report("DefenderRemover.exe (silent «y» — ionuttbara / community build)");
+                    p.Report("Bundled DefenderRemover (silent)");
                     await ProcessRunner.RunAsync(defenderRemover, "y", false, p, ct).ConfigureAwait(false);
                 }
             },
@@ -408,7 +408,7 @@ public static class ExtremeTweaks
             PlanOrder = 0,
             ShouldApply = _ => true,
             ExplainDecision = _ =>
-                "Consumer browsers are trimmed first; then local installers (WebView2, VC++ AIO, dxwebsetup, App Installer msix) if present under Assets or Downloads; winget fills gaps; Chocolatey is bootstrapped only if needed and used as a secondary installer for key game clients.",
+                "Consumer browsers are trimmed first; optional redistributables under Assets run silently when present; winget installs missing Brave, Steam, Discord, Epic, VC++, DirectX, and .NET when available.",
             TryGetAppliedState = _ => null,
             Apply = async (p, ct) =>
             {

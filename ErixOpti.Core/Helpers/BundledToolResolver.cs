@@ -74,8 +74,8 @@ public static class BundledToolResolver
         return null;
     }
 
-    /// <summary>ExecTI / RunAsTI style launchers (folder or single file).</summary>
-    public static string? ResolveExecTiLauncher()
+    /// <summary>Optional cmd/exe wrappers that run the following command line as TrustedInstaller (same filenames many admins already use).</summary>
+    public static string? ResolveTrustedInstallerLauncherScript()
     {
         foreach (var root in SearchRoots())
         {
@@ -92,10 +92,10 @@ public static class BundledToolResolver
                     return inRoot;
                 }
 
-                var inExecTi = Path.Combine(root, "ExecTI", name);
-                if (File.Exists(inExecTi))
+                var sub = Path.Combine(root, "ExecTI", name);
+                if (File.Exists(sub))
                 {
-                    return inExecTi;
+                    return sub;
                 }
             }
         }
@@ -150,7 +150,7 @@ public static class BundledToolResolver
 
         Add("DefenderRemover", ResolveDefenderRemover());
         Add("AdvancedRun", ResolveAdvancedRun());
-        Add("ExecTI", ResolveExecTiLauncher());
+        Add("TI helper", ResolveTrustedInstallerLauncherScript());
         Add("WebView2", ResolveWebView2Bootstrapper());
         Add("VC++ AIO", ResolveVcRedistAio());
         Add("DirectX web", ResolveDirectXWebSetup());

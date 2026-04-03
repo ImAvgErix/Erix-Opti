@@ -3,16 +3,10 @@ using System.Text;
 namespace ErixOpti.Core.Helpers;
 
 /// <summary>
-/// Winget from local msix, Chocolatey bootstrap, and silent runs for common redistributable installers.
+/// After optimization: optional local redistributables from <c>Assets</c>, then winget for missing packages.
 /// </summary>
 public static class RuntimeBootstrapHelper
 {
-    private const string ChocolateyInstallScript = """
-Set-ExecutionPolicy Bypass -Scope Process -Force
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-""";
-
     public static async Task RunPostOptimizeRuntimeAsync(IProgress<string> p, CancellationToken ct)
     {
         p.Report(BundledToolResolver.SummarizeFoundTools());
@@ -21,7 +15,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 
         await InstallLocalSilentBootstrappersAsync(p, ct).ConfigureAwait(false);
 
-        p.Report("Winget: gaming dependencies (primary)");
+        p.Report("Winget: gaming dependencies");
         await WingetEnsureAsync(
                 [
                     ("Brave.Brave", "Brave"),
@@ -36,8 +30,6 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
                 p,
                 ct)
             .ConfigureAwait(false);
-
-        await EnsureChocolateyThenFillGapsAsync(p, ct).ConfigureAwait(false);
     }
 
     public static async Task EnsureWingetFromLocalBundleAsync(IProgress<string> p, CancellationToken ct)
@@ -51,7 +43,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
         var bundle = BundledToolResolver.ResolveDesktopAppInstallerBundle();
         if (bundle is null)
         {
-            p.Report("Winget: no local DesktopAppInstaller .msixbundle in Assets/Downloads — skipping offline install.");
+            p.Report("Winget: no Desktop App Installer .msixbundle under Assets — add one to enable offline winget.");
             return;
         }
 
@@ -83,48 +75,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
         var vc = BundledToolResolver.ResolveVcRedistAio();
         if (vc is not null)
         {
-            p.Report("Visual C++ AIO (local /ai silent all-in-one)");
+            p.Report("Visual C++ redistributable bundle (local silent)");
             await ProcessRunner.RunAsync(vc, "/ai", false, p, ct).ConfigureAwait(false);
-        }
-    }
-
-    private static async Task EnsureChocolateyThenFillGapsAsync(IProgress<string> p, CancellationToken ct)
-    {
-        var choco = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-            "chocolatey",
-            "choco.exe");
-        if (!File.Exists(choco))
-        {
-            p.Report("Chocolatey: not installed — bootstrapping (official install.ps1, process scope only)…");
-            await RunPowerShellScriptAsync(ChocolateyInstallScript, p, ct).ConfigureAwait(false);
-        }
-
-        if (!File.Exists(choco))
-        {
-            choco = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                "chocolatey",
-                "choco.exe");
-        }
-
-        if (!File.Exists(choco))
-        {
-            p.Report("Chocolatey: install did not produce choco.exe — skipping choco fallback.");
-            return;
-        }
-
-        p.Report("Chocolatey: secondary pass for common game clients (skips if already satisfied)…");
-        foreach (var id in new[] { "brave", "steam", "discord", "epicgameslauncher" })
-        {
-            ct.ThrowIfCancellationRequested();
-            await ProcessRunner.RunAsync(
-                    choco,
-                    $"install {id} -y --no-progress --limit-output",
-                    false,
-                    p,
-                    ct)
-                .ConfigureAwait(false);
         }
     }
 
@@ -168,7 +120,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
     {
         if (!await IsWingetOnPathAsync(ct).ConfigureAwait(false))
         {
-            p.Report("Winget not on PATH — skipped package checks (install App Installer bundle).");
+            p.Report("Winget not on PATH — skipped package checks (add App Installer msixbundle under Assets).");
             return;
         }
 

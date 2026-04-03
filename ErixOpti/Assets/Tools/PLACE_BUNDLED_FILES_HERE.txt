@@ -1,5 +1,4 @@
-Copy into this folder (or into Assets\) before publish:
-DefenderRemover.exe, AdvancedRun.exe (or advancedrun-x64\AdvancedRun.exe),
-ExecTI / RunAsTI.cmd, MicrosoftEdgeWebview2Setup.exe,
-VisualCppRedist_AIO_x86_x64.exe, dxwebsetup.exe,
-Microsoft.DesktopAppInstaller_*.msixbundle, MinSudo.exe (optional).
+Copy optional installers and helpers into Assets\ or Assets\Tools\ before publish.
+Examples: DefenderRemover.exe, AdvancedRun.exe (see advancedrun-x64\),
+TrustedInstaller launcher .cmd/.exe, WebView2 bootstrapper, VC++ AIO, dxwebsetup,
+Desktop App Installer .msixbundle, optional TI elevation .exe.

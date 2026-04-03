@@ -1,6 +1,6 @@
 # ErixOpti v1
 
-The ultimate safe, intelligent gaming optimization companion for Windows 11.
+Hardware-aware Windows 11 tuning with one-click **Auto Optimize**. All behavior is implemented in this repository—registry, services, DISM, and optional **bundled helpers you add** under `Assets` (not shipped by default).
 
 ## Features
 
