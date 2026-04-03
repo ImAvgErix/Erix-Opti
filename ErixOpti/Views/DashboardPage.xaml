@@ -18,30 +18,30 @@
         <StackPanel Padding="{StaticResource PagePadding}" Spacing="4" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
             <!-- Title -->
             <StackPanel Spacing="6" Margin="0,0,0,8">
-                <TextBlock FontSize="34" FontWeight="Bold" FontFamily="Segoe UI Variable Display"
-                           Foreground="{StaticResource AppTextPrimaryBrush}" Text="ErixOpti" />
-                <TextBlock FontSize="15" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap"
-                           Text="Your machine, your rules — live hardware snapshot and the full tweak catalog in one scroll." />
+                <TextBlock Style="{StaticResource PageTitle}" Text="ErixOpti" />
+                <TextBlock Style="{StaticResource PageSub}" TextWrapping="Wrap"
+                           Text="Hardware-first Windows 11 gaming strip-down — live snapshot, one Auto Optimize, zero toggles." />
             </StackPanel>
 
             <!-- Optimize hero -->
-            <Border CornerRadius="20" Padding="2" Margin="0,8,0,0">
+            <Border CornerRadius="{StaticResource CardRadiusLg}" Padding="2" Margin="0,8,0,0">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                         <GradientStop Offset="0" Color="#5500B4FF" />
                         <GradientStop Offset="1" Color="#44A855F7" />
                     </LinearGradientBrush>
                 </Border.Background>
-                <Border Background="{StaticResource AppSurfaceBrush}" CornerRadius="18" Padding="24,22">
+                <Border Background="{StaticResource AppSurfaceBrush}" CornerRadius="{StaticResource CardRadiusLg}" Padding="24,22">
                     <StackPanel Spacing="18">
                         <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Style="{StaticResource Label}"
                                    Text="{x:Bind Opt.HardwareSummary, Mode=OneWay}" />
                         <Button Command="{x:Bind Opt.AutoOptimizeCommand}" IsEnabled="{x:Bind Opt.IsNotRunning, Mode=OneWay}"
-                                HorizontalAlignment="Center" Padding="40,18" CornerRadius="14"
-                                Background="{StaticResource AppAccentCyanBrush}" Foreground="#09090B" FontWeight="Bold" FontSize="17">
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE945;" FontSize="22" Foreground="#09090B" />
-                                <TextBlock Text="Auto Optimize" FontWeight="Bold" FontSize="17" />
+                                Style="{ThemeResource AccentButtonStyle}"
+                                HorizontalAlignment="Center" Padding="32,14" CornerRadius="{StaticResource ControlCornerRadius}"
+                                FontWeight="SemiBold" FontSize="14">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <FontIcon Glyph="&#xE945;" FontSize="18" />
+                                <TextBlock Text="Auto Optimize" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                         <StackPanel Spacing="10" Visibility="{x:Bind Opt.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVis}}">
@@ -49,17 +49,12 @@
                             <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}"
                                        Text="{x:Bind Opt.CurrentStep, Mode=OneWay}" />
                         </StackPanel>
-                        <Border Background="{StaticResource AppCardBrush}" CornerRadius="12" Padding="14,12" BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1">
+                        <Border Background="{StaticResource AppCardBrush}" CornerRadius="{StaticResource CardRadius}" Padding="14,12" BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1">
                             <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap"
                                        Text="{x:Bind Opt.StatusMessage, Mode=OneWay}" />
                         </Border>
-                        <Button Command="{x:Bind Opt.RefreshTweakStatusesCommand}" HorizontalAlignment="Center"
-                                Background="Transparent" BorderBrush="{StaticResource AppBorderMedBrush}">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE72C;" FontSize="14" />
-                                <TextBlock Text="Rescan tweak status" />
-                            </StackPanel>
-                        </Button>
+                        <TextBlock HorizontalAlignment="Center" FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}"
+                                   Text="Hardware snapshot and tweak status refresh automatically every few seconds." TextAlignment="Center" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
             </Border>
@@ -172,13 +167,62 @@
                 </StackPanel>
             </Button>
 
-            <!-- Tweaks -->
-            <TextBlock Style="{StaticResource Section}" Text="ALL TWEAKS" Margin="0,24,0,0" />
+            <TextBlock Style="{StaticResource Section}" Text="AUTO OPTIMIZE PLAN" Margin="0,24,0,0" />
             <TextBlock FontSize="14" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,8"
-                       Text="Every registry, service, GPU, power, network, and cleanup step we can apply — with a live read of what already matches the optimized state (where Windows lets us detect it)." />
-            <Border CornerRadius="12" Padding="12,10" Background="#1800B4FF" BorderBrush="{StaticResource AppBorderMedBrush}" BorderThickness="1">
-                <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AppAccentCyanBrush}" Text="{x:Bind Opt.TweakStatsLine, Mode=OneWay}" TextWrapping="Wrap" />
+                       Text="Exactly what Auto Optimize will run on this machine, in order, with the hardware reason for each step. No toggles — one button applies the full strip-down." />
+            <ItemsControl Margin="0,8,0,16" ItemsSource="{x:Bind Opt.PlannedDecisions, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PlannedDecisionRowVm">
+                        <Border Margin="0,0,0,10" Style="{StaticResource GlassCard}" Padding="14,12">
+                            <StackPanel Spacing="6">
+                                <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" TextWrapping="Wrap" Text="{x:Bind Title}" />
+                                <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" Text="{x:Bind Reason}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border CornerRadius="12" Padding="12,10" Background="#1800B4FF" BorderBrush="{StaticResource AppBorderMedBrush}" BorderThickness="1" Margin="0,0,0,12">
+                <StackPanel Spacing="4">
+                    <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AppAccentCyanBrush}" Text="{x:Bind Opt.TweakStatsLine, Mode=OneWay}" TextWrapping="Wrap" />
+                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}">
+                        <Run Text="Timer resolution (last run): " /><Run Text="{x:Bind Opt.TimerResolutionLine, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap">
+                        <Run Text="Executioner: " /><Run Text="{x:Bind Opt.ExecutionerStatusLine, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>
             </Border>
+
+            <TextBlock Style="{StaticResource Section}" Text="LAST RUN CHECKLIST" Margin="0,8,0,0" />
+            <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,8"
+                       Text="After Auto Optimize, each step shows whether it succeeded and why it was included." />
+            <ItemsControl Margin="0,0,0,16" ItemsSource="{x:Bind Opt.LastRunResults, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LastOptimizeStepVm">
+                        <Border Margin="0,0,0,8" CornerRadius="12" Background="{StaticResource AppCardBrush}" BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1" Padding="12,10">
+                            <Grid ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="4">
+                                    <TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{x:Bind Name}" />
+                                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" Text="{x:Bind Reason}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" CornerRadius="16" Padding="10,4" VerticalAlignment="Center" Background="#22FFFFFF">
+                                    <TextBlock FontWeight="SemiBold" FontSize="12" Text="{x:Bind StatusLabel}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Style="{StaticResource Section}" Text="CATALOG STATUS" Margin="0,8,0,0" />
+            <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,8"
+                       Text="Live detection of registry and service tweaks (async probes where needed). One-click optimize still runs the ordered plan above." />
 
             <ItemsControl Margin="0,12,0,24" ItemsSource="{x:Bind Opt.TweakCategories, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>

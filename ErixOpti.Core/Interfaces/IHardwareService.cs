@@ -10,5 +10,7 @@ public interface IHardwareService
 
     Task StartAsync(CancellationToken ct = default);
 
+    Task RefreshAsync(CancellationToken ct = default);
+
     Task StopAsync();
 }

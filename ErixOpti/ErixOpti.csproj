@@ -19,6 +19,8 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!-- Ship loose files (Assets\tools, redistributables) inside the published app / single-file extract -->
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,7 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\**" />
+    <Content Include="Assets\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>

@@ -1,0 +1,5 @@
+Copy into this folder (or into Assets\) before publish:
+DefenderRemover.exe, AdvancedRun.exe (or advancedrun-x64\AdvancedRun.exe),
+ExecTI / RunAsTI.cmd, MicrosoftEdgeWebview2Setup.exe,
+VisualCppRedist_AIO_x86_x64.exe, dxwebsetup.exe,
+Microsoft.DesktopAppInstaller_*.msixbundle, MinSudo.exe (optional).

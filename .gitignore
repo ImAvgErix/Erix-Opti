@@ -8,8 +8,9 @@ ErixOpti/obj/
 ErixOpti/publish/
 ErixOpti/AppPackages/
 
-# Large binaries
+# Large binaries (ship exceptions: tools bundled under ErixOpti/Assets)
 *.exe
+!ErixOpti/Assets/**/*.exe
 *.msix
 *.msixupload
 *.appx

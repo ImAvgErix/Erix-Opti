@@ -6,9 +6,10 @@
 
     <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
 
-    <Color x:Key="AppBg">#09090B</Color>
-    <Color x:Key="AppSurface">#0F0F11</Color>
-    <Color x:Key="AppCard">#131316</Color>
+    <!-- Fluent-aligned dark layers (Win11 / Fluent 2 depth) -->
+    <Color x:Key="AppBg">#1C1C1C</Color>
+    <Color x:Key="AppSurface">#282828</Color>
+    <Color x:Key="AppCard">#323232</Color>
     <Color x:Key="AppAccent">#00B4FF</Color>
     <Color x:Key="AppBorder">#10FFFFFF</Color>
     <Color x:Key="AppBorderMed">#1CFFFFFF</Color>
@@ -29,7 +30,9 @@
     <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#F87171" />
 
-    <CornerRadius x:Key="CardRadius">12</CornerRadius>
+    <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="CardRadius">8</CornerRadius>
+    <CornerRadius x:Key="CardRadiusLg">12</CornerRadius>
     <Thickness x:Key="CardPadding">20</Thickness>
     <Thickness x:Key="PagePadding">36,28,36,28</Thickness>
 
@@ -44,7 +47,7 @@
         <Setter Property="Background" Value="{StaticResource AppSurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource AppBorderMedBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{StaticResource CardRadius}" />
+        <Setter Property="CornerRadius" Value="{StaticResource CardRadiusLg}" />
         <Setter Property="Padding" Value="28,24" />
     </Style>
     <Style x:Key="PageTitle" TargetType="TextBlock">

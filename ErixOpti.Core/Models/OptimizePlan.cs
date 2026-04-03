@@ -3,6 +3,9 @@ namespace ErixOpti.Core.Models;
 public sealed class OptimizePlan
 {
     public IReadOnlyList<TweakOperation> Operations { get; init; } = [];
+
+    public IReadOnlyList<PlannedTweak> Planned { get; init; } = [];
+
     public int TotalCount => Operations.Count;
 }
 

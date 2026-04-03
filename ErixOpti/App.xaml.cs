@@ -39,13 +39,16 @@ public partial class App : Application
                 s.AddSingleton(uiSink);
                 s.AddSingleton<IHardwareService, HardwareService>();
                 s.AddSingleton<IBackupService, BackupService>();
+                s.AddSingleton<IOptimizeSessionState, OptimizeSessionState>();
                 s.AddSingleton<IAutoOptimizeEngine, AutoOptimizeEngine>();
                 s.AddSingleton<HardwareViewModel>();
                 s.AddSingleton<OptimizationsViewModel>();
                 s.AddSingleton<MainWindow>();
                 s.AddTransient<DashboardPage>();
+                s.AddHostedService<GameExecutionerHostedService>();
             }).Build();
 
+        await AppHost.StartAsync();
         await AppHost.Services.GetRequiredService<IHardwareService>().StartAsync();
         _window = AppHost.Services.GetRequiredService<MainWindow>();
         _window.Activate();

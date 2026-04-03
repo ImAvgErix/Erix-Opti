@@ -15,6 +15,7 @@ public static class TweakCatalog
             ..PowerTweaks.All,
             ..GpuTweaks.All,
             ..NetworkTweaks.All,
+            ..ExtremeTweaks.All,
             ..CleanupTweaks.All,
         ];
     }

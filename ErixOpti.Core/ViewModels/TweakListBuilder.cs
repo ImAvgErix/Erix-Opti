@@ -8,71 +8,111 @@ public static class TweakListBuilder
 {
     public static readonly string[] CategoryOrder =
     [
-        "Input", "System", "Memory", "Gaming", "Privacy", "Explorer", "Visual", "Storage",
-        "GPU", "Power", "Network", "Services", "Cleanup",
+        "Input", "System", "Memory", "Gaming", "GPU", "Power", "Network",
+        "Privacy", "Security", "Explorer", "Visual", "Storage",
+        "Services", "Apps", "Tasks", "Cleanup", "Post",
     ];
 
-    public static void Rebuild(ObservableCollection<TweakCategoryVm> target, HardwareInfo hw)
+    public static async Task RebuildAsync(
+        ObservableCollection<TweakCategoryVm> target,
+        HardwareInfo hw,
+        CancellationToken ct)
     {
         var ops = TweakCatalog.All(hw);
         var map = ops.GroupBy(o => o.Category).ToDictionary(g => g.Key, g => g.OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase).ToList());
         target.Clear();
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+        async Task AddCategoryAsync(string cat, List<TweakOperation> list)
+        {
+            var vm = new TweakCategoryVm(cat);
+            foreach (var op in list)
+            {
+                vm.Items.Add(await MakeRowAsync(op, hw, ct).ConfigureAwait(false));
+            }
+
+            target.Add(vm);
+        }
+
         foreach (var cat in CategoryOrder)
         {
             if (!map.TryGetValue(cat, out var list))
+            {
                 continue;
+            }
+
             seen.Add(cat);
-            var vm = new TweakCategoryVm(cat);
-            foreach (var op in list)
-                vm.Items.Add(MakeRow(op, hw));
-            target.Add(vm);
+            await AddCategoryAsync(cat, list).ConfigureAwait(false);
         }
 
         foreach (var cat in map.Keys.Where(k => !seen.Contains(k)).OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
         {
-            var vm = new TweakCategoryVm(cat);
-            foreach (var op in map[cat])
-                vm.Items.Add(MakeRow(op, hw));
-            target.Add(vm);
+            await AddCategoryAsync(cat, map[cat]).ConfigureAwait(false);
         }
     }
 
-    public static (int Active, int EligibleProbeable, int Total) CountSummary(HardwareInfo hw)
+    public static async Task<(int Active, int EligibleProbeable, int Total)> CountSummaryAsync(HardwareInfo hw, CancellationToken ct)
     {
         var ops = TweakCatalog.All(hw);
         int active = 0, eligible = 0, total = ops.Count;
         foreach (var op in ops)
         {
             if (!op.ShouldApply(hw))
+            {
                 continue;
-            if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
+            }
+
+            if (op.Id.StartsWith("clean.", StringComparison.Ordinal) || op.Category == "Post")
+            {
                 continue;
+            }
+
             eligible++;
-            var probe = op.TryGetAppliedState;
-            if (probe?.Invoke(hw) is true)
+            bool? probe;
+            if (op.TryGetAppliedStateAsync is not null)
+            {
+                probe = await op.TryGetAppliedStateAsync(hw, ct).ConfigureAwait(false);
+            }
+            else
+            {
+                probe = op.TryGetAppliedState?.Invoke(hw);
+            }
+
+            if (probe is true)
+            {
                 active++;
+            }
         }
 
         return (active, eligible, total);
     }
 
-    private static TweakRowVm MakeRow(TweakOperation op, HardwareInfo hw)
+    private static async Task<TweakRowVm> MakeRowAsync(TweakOperation op, HardwareInfo hw, CancellationToken ct)
     {
         if (!op.ShouldApply(hw))
+        {
             return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Skipped, "Skipped on this PC", "#78716C");
+        }
 
-        if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
-            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.OneShot, "Runs when you optimize", "#C084FC");
+        if (op.Id.StartsWith("clean.", StringComparison.Ordinal) || op.Category == "Post")
+        {
+            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.OneShot, "Runs during Auto Optimize", "#C084FC");
+        }
 
-        var probe = op.TryGetAppliedState;
-        if (probe is null)
-            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Unknown, "Status not detected", "#FBBF24");
+        bool? r;
+        if (op.TryGetAppliedStateAsync is not null)
+        {
+            r = await op.TryGetAppliedStateAsync(hw, ct).ConfigureAwait(false);
+        }
+        else
+        {
+            r = op.TryGetAppliedState?.Invoke(hw);
+        }
 
-        var r = probe(hw);
         if (r is null)
+        {
             return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Unknown, "Status not detected", "#FBBF24");
+        }
 
         return r.Value
             ? new TweakRowVm(op.Id, op.Name, TweakUiStatus.Active, "Already on", "#34D399")

@@ -18,6 +18,8 @@ public sealed class HardwareService : IHardwareService, IDisposable
         HardwareUpdated?.Invoke(this, EventArgs.Empty);
     }
 
+    public Task RefreshAsync(CancellationToken ct = default) => StartAsync(ct);
+
     public Task StopAsync() => Task.CompletedTask;
     public void Dispose() { }
 
