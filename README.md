@@ -2,8 +2,6 @@
 
 Hardware-aware Windows 11 tuning with one-click **Auto Optimize**. All behavior is implemented in this repository—registry, services, DISM, and optional **bundled helpers you add** under `Assets` (not shipped by default).
 
-## Features
-
 ### Hardware Dashboard
 - Static WMI-powered system snapshot: CPU, GPU, RAM (type/speed/slots), storage, motherboard, network, peripherals
 - Monitor count, USB device count, audio device detection
