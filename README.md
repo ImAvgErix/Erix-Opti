@@ -1,6 +1,6 @@
 # ErixOpti v1
 
-Hardware-aware Windows 11 tuning with one-click **Auto Optimize**. All behavior is implemented in this repository—registry, services, DISM, and optional **bundled helpers you add** under `Assets` (not shipped by default).
+Hardware-aware Windows 11 tuning with one-click **Auto Optimize** (registry, services, power, GPU, network, cleanup). Implemented in this repo; runs elevated with automatic restore-point + registry export before changes.
 
 ## Features
 

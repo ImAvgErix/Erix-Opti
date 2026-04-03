@@ -14,15 +14,11 @@ public static class HardwareDecisionEngine
         "Power" => 40,
         "Network" => 45,
         "Privacy" => 50,
-        "Security" => 52,
         "Explorer" => 60,
         "Visual" => 65,
         "Storage" => 70,
         "Services" => 80,
-        "Apps" => 85,
-        "Tasks" => 86,
         "Cleanup" => 900,
-        "Post" => 950,
         _ => 100,
     };
 
@@ -47,5 +43,5 @@ public static class HardwareDecisionEngine
     }
 
     private static string DefaultReason(TweakOperation op, HardwareInfo hw) =>
-        $"Selected for this PC ({hw.FormFactor}, {hw.CpuManufacturer} CPU, {hw.PrimaryGpuVendor} GPU, {hw.RamTotalGb:0.#} GB RAM) because “{op.Name}” is part of the barebones gaming profile.";
+        $"Selected for this PC ({hw.FormFactor}, {hw.CpuManufacturer} CPU, {hw.PrimaryGpuVendor} GPU, {hw.RamTotalGb:0.#} GB RAM) because “{op.Name}” is part of the optimization profile.";
 }

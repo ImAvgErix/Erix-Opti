@@ -57,11 +57,6 @@ public sealed class AutoOptimizeEngine(
                 succeeded++;
                 _session.AddStep(op.Name, reason, ok: true);
                 OptimizationFileLog.Write($"[{i + 1}/{plan.TotalCount}] OK {op.Id}");
-                if (op.Id == "post.timer-resolution")
-                {
-                    TimerResolutionNative.Query(out _, out _, out var cur);
-                    _session.MeasuredTimerResolutionMs = $"{cur:0.###} ms (Nt current)";
-                }
             }
             catch (Exception ex)
             {
@@ -73,18 +68,12 @@ public sealed class AutoOptimizeEngine(
         }
 
         var pending = RebootDetectionHelper.IsRebootPending();
-        var majorProfile = plan.Operations.Any(o =>
-            string.Equals(o.Category, "Security", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(o.Category, "Post", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(o.Category, "Apps", StringComparison.OrdinalIgnoreCase));
-        _session.SetRebootRecommended(pending || majorProfile);
-
-        _session.ExecutionerActive = true;
+        _session.SetRebootRecommended(pending);
 
         var summary = failed == 0
             ? $"Applied {succeeded} optimizations successfully."
             : $"Completed: {succeeded} succeeded, {failed} failed out of {plan.TotalCount}.";
-        OptimizationFileLog.Write($"── Optimize end — {summary} RebootPending={pending} MajorProfile={majorProfile} ──");
+        OptimizationFileLog.Write($"── Optimize end — {summary} RebootPending={pending} ──");
         progress.Report(new OptimizeProgress(plan.TotalCount, plan.TotalCount, "Done", summary));
     }
 }

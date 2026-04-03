@@ -9,8 +9,8 @@ public static class TweakListBuilder
     public static readonly string[] CategoryOrder =
     [
         "Input", "System", "Memory", "Gaming", "GPU", "Power", "Network",
-        "Privacy", "Security", "Explorer", "Visual", "Storage",
-        "Services", "Apps", "Tasks", "Cleanup", "Post",
+        "Privacy", "Explorer", "Visual", "Storage",
+        "Services", "Cleanup",
     ];
 
     public static async Task RebuildAsync(
@@ -28,7 +28,7 @@ public static class TweakListBuilder
             var vm = new TweakCategoryVm(cat);
             foreach (var op in list)
             {
-                vm.Items.Add(await MakeRowAsync(op, hw, ct).ConfigureAwait(false));
+                vm.Items.Add(await MakeRowAsync(op, hw, ct));
             }
 
             target.Add(vm);
@@ -42,12 +42,12 @@ public static class TweakListBuilder
             }
 
             seen.Add(cat);
-            await AddCategoryAsync(cat, list).ConfigureAwait(false);
+            await AddCategoryAsync(cat, list);
         }
 
         foreach (var cat in map.Keys.Where(k => !seen.Contains(k)).OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
         {
-            await AddCategoryAsync(cat, map[cat]).ConfigureAwait(false);
+            await AddCategoryAsync(cat, map[cat]);
         }
     }
 
@@ -62,7 +62,7 @@ public static class TweakListBuilder
                 continue;
             }
 
-            if (op.Id.StartsWith("clean.", StringComparison.Ordinal) || op.Category == "Post")
+            if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
             {
                 continue;
             }
@@ -71,7 +71,7 @@ public static class TweakListBuilder
             bool? probe;
             if (op.TryGetAppliedStateAsync is not null)
             {
-                probe = await op.TryGetAppliedStateAsync(hw, ct).ConfigureAwait(false);
+                probe = await op.TryGetAppliedStateAsync(hw, ct);
             }
             else
             {
@@ -94,7 +94,7 @@ public static class TweakListBuilder
             return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Skipped, "Skipped on this PC", "#78716C");
         }
 
-        if (op.Id.StartsWith("clean.", StringComparison.Ordinal) || op.Category == "Post")
+        if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
         {
             return new TweakRowVm(op.Id, op.Name, TweakUiStatus.OneShot, "Runs during Auto Optimize", "#C084FC");
         }
@@ -102,7 +102,7 @@ public static class TweakListBuilder
         bool? r;
         if (op.TryGetAppliedStateAsync is not null)
         {
-            r = await op.TryGetAppliedStateAsync(hw, ct).ConfigureAwait(false);
+            r = await op.TryGetAppliedStateAsync(hw, ct);
         }
         else
         {

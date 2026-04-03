@@ -4,10 +4,6 @@ public interface IOptimizeSessionState
 {
     bool RebootRecommended { get; }
 
-    string? MeasuredTimerResolutionMs { get; set; }
-
-    bool ExecutionerActive { get; set; }
-
     IReadOnlyList<OptimizeStepRecord> LastRunSteps { get; }
 
     void ClearLastRun();

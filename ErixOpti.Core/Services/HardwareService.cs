@@ -130,13 +130,15 @@ public sealed class HardwareService : IHardwareService, IDisposable
         using (var os = new ManagementObjectSearcher("SELECT TotalVisibleMemorySize,FreePhysicalMemory FROM Win32_OperatingSystem"))
             foreach (ManagementObject mo in os.Get()) { ct.ThrowIfCancellationRequested(); var tk = Convert.ToDouble(mo["TotalVisibleMemorySize"]??0); var fk = Convert.ToDouble(mo["FreePhysicalMemory"]??0); _current.RamTotalGb = tk/1048576.0; _current.RamAvailableGb = fk/1048576.0; mo.Dispose(); break; }
         int speed = 0, slots = 0;
+        ulong installedBytes = 0;
         var typesSeen = new HashSet<string>();
-        using (var m = new ManagementObjectSearcher("SELECT Speed,SMBIOSMemoryType FROM Win32_PhysicalMemory"))
+        using (var m = new ManagementObjectSearcher("SELECT Speed,SMBIOSMemoryType,Capacity FROM Win32_PhysicalMemory"))
         {
             foreach (ManagementObject mo in m.Get())
             {
                 ct.ThrowIfCancellationRequested();
                 slots++;
+                installedBytes += Convert.ToUInt64(mo["Capacity"] ?? 0UL);
                 var sp = Convert.ToInt32(mo["Speed"] ?? 0);
                 if (sp > speed) speed = sp;
                 var t = Convert.ToInt32(mo["SMBIOSMemoryType"] ?? 0);
@@ -144,6 +146,7 @@ public sealed class HardwareService : IHardwareService, IDisposable
                 mo.Dispose();
             }
         }
+        _current.RamInstalledGb = installedBytes / (1024.0 * 1024.0 * 1024.0);
         _current.RamSpeedMhz = speed;
         _current.RamType = typesSeen.Count == 0 ? "—" : string.Join(" / ", typesSeen);
         _current.RamSlotsUsed = slots;
@@ -182,7 +185,25 @@ public sealed class HardwareService : IHardwareService, IDisposable
 
     private void DetectOs()
     {
-        try { using var k = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"); var cb = k?.GetValue("CurrentBuild")?.ToString(); var ub = k?.GetValue("UBR")?.ToString(); _current.OsBuild = string.IsNullOrEmpty(cb)?"—":(string.IsNullOrEmpty(ub)?cb:$"{cb}.{ub}"); _current.OsEdition = k?.GetValue("ProductName")?.ToString() ?? "—"; } catch { }
+        try
+        {
+            using var k = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+            if (k == null) return;
+            var cb = k.GetValue("CurrentBuild")?.ToString();
+            var ub = k.GetValue("UBR")?.ToString();
+            _current.OsBuild = string.IsNullOrEmpty(cb) ? "—" : (string.IsNullOrEmpty(ub) ? cb : $"{cb}.{ub}");
+            var edition = k.GetValue("ProductName")?.ToString() ?? "—";
+            var displayVersion = k.GetValue("DisplayVersion")?.ToString();
+            if (int.TryParse(cb, out var build) && build >= 22000)
+            {
+                // ProductName still says "Windows 10" on many Win11 SKUs (incl. IoT Enterprise LTSC).
+                edition = edition.Replace("Windows 10", "Windows 11", StringComparison.OrdinalIgnoreCase);
+            }
+            if (!string.IsNullOrWhiteSpace(displayVersion))
+                edition = $"{edition} · {displayVersion}";
+            _current.OsEdition = edition;
+        }
+        catch { /* ignore */ }
     }
 
     private void DetectMonitors(CancellationToken ct)

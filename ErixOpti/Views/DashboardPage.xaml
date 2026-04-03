@@ -14,54 +14,56 @@
         <conv:HexToBrushConverter x:Key="HexToBrush" />
     </Page.Resources>
 
-    <ScrollViewer>
-        <StackPanel Padding="{StaticResource PagePadding}" Spacing="4" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled">
+        <Grid Padding="{StaticResource PagePadding}" HorizontalAlignment="Stretch" ani:Implicit.ShowAnimations="{StaticResource Entrance}">
+            <StackPanel MaxWidth="880" HorizontalAlignment="Center" Spacing="0">
             <!-- Title -->
-            <StackPanel Spacing="6" Margin="0,0,0,8">
+            <StackPanel Spacing="4" Margin="0,0,0,12">
                 <TextBlock Style="{StaticResource PageTitle}" Text="ErixOpti" />
                 <TextBlock Style="{StaticResource PageSub}" TextWrapping="Wrap"
-                           Text="Hardware-first Windows 11 gaming strip-down — live snapshot, one Auto Optimize, zero toggles." />
+                           Text="Hardware-aware Windows 11 tuning — live snapshot, one-tap Auto Optimize, no toggle maze." />
             </StackPanel>
 
             <!-- Optimize hero -->
-            <Border CornerRadius="{StaticResource CardRadiusLg}" Padding="2" Margin="0,8,0,0">
+            <Border CornerRadius="{StaticResource CardRadiusLg}" Padding="1" Margin="0,0,0,4">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Offset="0" Color="#5500B4FF" />
-                        <GradientStop Offset="1" Color="#44A855F7" />
+                        <GradientStop Offset="0" Color="#4000B4FF" />
+                        <GradientStop Offset="1" Color="#308B5CF6" />
                     </LinearGradientBrush>
                 </Border.Background>
-                <Border Background="{StaticResource AppSurfaceBrush}" CornerRadius="{StaticResource CardRadiusLg}" Padding="24,22">
-                    <StackPanel Spacing="18">
-                        <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Style="{StaticResource Label}"
+                <Border Background="{StaticResource AppSurfaceBrush}" CornerRadius="{StaticResource CardRadiusLg}" Padding="20,16">
+                    <StackPanel Spacing="14">
+                        <TextBlock HorizontalAlignment="Stretch" TextAlignment="Center" Style="{StaticResource Label}"
                                    Text="{x:Bind Opt.HardwareSummary, Mode=OneWay}" />
                         <Button Command="{x:Bind Opt.AutoOptimizeCommand}" IsEnabled="{x:Bind Opt.IsNotRunning, Mode=OneWay}"
                                 Style="{ThemeResource AccentButtonStyle}"
-                                HorizontalAlignment="Center" Padding="32,14" CornerRadius="{StaticResource ControlCornerRadius}"
+                                HorizontalAlignment="Stretch" MaxWidth="320" Padding="24,12" CornerRadius="{StaticResource ControlCornerRadius}"
                                 FontWeight="SemiBold" FontSize="14">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE945;" FontSize="18" />
                                 <TextBlock Text="Auto Optimize" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <StackPanel Spacing="10" Visibility="{x:Bind Opt.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Spacing="8" Visibility="{x:Bind Opt.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVis}}">
                             <ProgressBar Style="{StaticResource AccentProgress}" Maximum="100" Value="{x:Bind Opt.ProgressPercent, Mode=OneWay}" />
                             <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}"
                                        Text="{x:Bind Opt.CurrentStep, Mode=OneWay}" />
                         </StackPanel>
-                        <Border Background="{StaticResource AppCardBrush}" CornerRadius="{StaticResource CardRadius}" Padding="14,12" BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1">
-                            <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap"
+                        <Border Background="{StaticResource AppCardBrush}" CornerRadius="{StaticResource CardRadius}" MinHeight="44" Padding="12,10" VerticalAlignment="Top"
+                                BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1">
+                            <TextBlock FontSize="13" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" VerticalAlignment="Center"
                                        Text="{x:Bind Opt.StatusMessage, Mode=OneWay}" />
                         </Border>
-                        <TextBlock HorizontalAlignment="Center" FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}"
-                                   Text="Hardware snapshot and tweak status refresh automatically every few seconds." TextAlignment="Center" TextWrapping="Wrap" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource AppTextDimBrush}"
+                                   Text="Snapshot and catalog refresh on a short timer." TextAlignment="Center" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
             </Border>
 
             <!-- Hardware strip -->
-            <TextBlock Style="{StaticResource Section}" Text="HARDWARE SNAPSHOT" Margin="0,20,0,0" />
-            <Grid ColumnSpacing="12" RowSpacing="12">
+            <TextBlock Style="{StaticResource Section}" Text="HARDWARE SNAPSHOT" Margin="0,16,0,0" />
+            <Grid ColumnSpacing="10" RowSpacing="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -72,17 +74,17 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GlassCard}">
+                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource GlassCard}" MinHeight="88" Padding="16,14">
                     <Grid ColumnSpacing="14">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border Width="48" Height="48" CornerRadius="14" Background="#1500B4FF" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE7F4;" FontSize="22" Foreground="{StaticResource AppAccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="44" Height="44" CornerRadius="12" Background="#1800B4FF" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE7F4;" FontSize="20" Foreground="{StaticResource AppAccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
-                            <TextBlock FontSize="18" FontWeight="Bold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind HW.Model.PcName, Mode=OneWay}" />
+                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" Text="{x:Bind HW.Model.PcName, Mode=OneWay}" />
                             <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap">
                                 <Run Text="{x:Bind HW.Model.OsEdition, Mode=OneWay}" /><Run Text="  ·  Build " /><Run Text="{x:Bind HW.Model.OsBuild, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind HW.Model.FormFactor, Mode=OneWay}" />
                             </TextBlock>
@@ -90,8 +92,8 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassCard}" Padding="16,14">
-                    <StackPanel Spacing="6">
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource HardwareSnapshotTile}">
+                    <StackPanel Spacing="6" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Border Width="32" Height="32" CornerRadius="8" Background="#1500B4FF" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE950;" FontSize="15" Foreground="{StaticResource AppAccentCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -105,8 +107,8 @@
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassCard}" Padding="16,14">
-                    <StackPanel Spacing="6">
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource HardwareSnapshotTile}">
+                    <StackPanel Spacing="6" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Border Width="32" Height="32" CornerRadius="8" Background="#15FF6B00" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE7F8;" FontSize="15" Foreground="#FF6B00" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -115,44 +117,43 @@
                         </StackPanel>
                         <TextBlock Style="{StaticResource Value}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Text="{x:Bind HW.Model.GpuName, Mode=OneWay}" />
                         <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap">
-                            <Run Text="{x:Bind HW.Model.PrimaryGpuVendor, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind HW.Model.GpuMemoryGb, Mode=OneWay}" /><Run Text=" GB VRAM" />
+                            <Run Text="{x:Bind HW.Model.PrimaryGpuVendor, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind HW.GpuVramGbFormatted, Mode=OneWay}" /><Run Text=" GB VRAM" />
                         </TextBlock>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource GlassCard}" Padding="16,14">
-                    <StackPanel Spacing="6">
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource HardwareSnapshotTile}">
+                    <StackPanel Spacing="6" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Border Width="32" Height="32" CornerRadius="8" Background="#158B5CF6" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xECAD;" FontSize="15" Foreground="#8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="MEMORY" FontWeight="SemiBold" Foreground="{StaticResource AppTextDimBrush}" FontSize="11" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock FontSize="22" FontWeight="Bold" Foreground="{StaticResource AppAccentCyanBrush}" FontFamily="Segoe UI Variable Display">
-                            <Run Text="{x:Bind HW.RamTotalFormatted, Mode=OneWay}" /><Run Text=" GB" />
+                        <TextBlock Style="{StaticResource BigValue}" FontSize="22">
+                            <Run Text="{x:Bind HW.RamHeadlineGb, Mode=OneWay}" /><Run Text=" GB" />
                         </TextBlock>
-                        <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap">
-                            <Run Text="{x:Bind HW.Model.RamType, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{x:Bind HW.Model.RamSpeedMhz, Mode=OneWay}" /><Run Text=" MHz  ·  " /><Run Text="{x:Bind HW.Model.RamSlotsUsed, Mode=OneWay}" /><Run Text=" sticks" />
-                        </TextBlock>
+                        <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap" Text="{x:Bind HW.RamSubline, Mode=OneWay}" />
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource GlassCard}" Padding="16,14">
-                    <StackPanel Spacing="6">
+                <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource HardwareSnapshotTile}">
+                    <StackPanel Spacing="6" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Border Width="32" Height="32" CornerRadius="8" Background="#1534D399" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xEDA2;" FontSize="15" Foreground="#34D399" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="STORAGE" FontWeight="SemiBold" Foreground="{StaticResource AppTextDimBrush}" FontSize="11" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap" Text="{x:Bind HW.Model.StorageSummary, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource Value}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxLines="3" LineHeight="22"
+                                   Text="{x:Bind HW.Model.StorageSummary, Mode=OneWay}" />
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <Border Style="{StaticResource GlassCard}" Margin="0,4,0,0">
+            <Border Style="{StaticResource GlassCard}" Margin="0,10,0,0" Padding="16,14">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Platform" FontWeight="SemiBold" Foreground="{StaticResource AppTextPrimaryBrush}" />
+                    <TextBlock Text="Platform" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource AppTextDimBrush}" />
                     <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap"><Run Text="Board: " /><Run Text="{x:Bind HW.Model.Motherboard, Mode=OneWay}" /></TextBlock>
                     <TextBlock Style="{StaticResource Label}"><Run Text="BIOS: " /><Run Text="{x:Bind HW.Model.BiosVersion, Mode=OneWay}" /></TextBlock>
                     <TextBlock Style="{StaticResource Label}" TextWrapping="Wrap"><Run Text="Network: " /><Run Text="{x:Bind HW.Model.NetworkAdapter, Mode=OneWay}" /><Run Text=" (" /><Run Text="{x:Bind HW.Model.NetworkSpeed, Mode=OneWay}" /><Run Text=")" /></TextBlock>
@@ -160,7 +161,7 @@
                 </StackPanel>
             </Border>
 
-            <Button Click="OnExport" Margin="0,8,0,0" HorizontalAlignment="Left" Padding="16,10" CornerRadius="10" Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}">
+            <Button Click="OnExport" Margin="0,10,0,0" HorizontalAlignment="Left" Padding="14,8" CornerRadius="{StaticResource ControlCornerRadius}" Background="Transparent" BorderBrush="{StaticResource AppGlassBorderBrush}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE9F9;" FontSize="14" />
                     <TextBlock Text="Export hardware report" />
@@ -184,15 +185,7 @@
             </ItemsControl>
 
             <Border CornerRadius="12" Padding="12,10" Background="#1800B4FF" BorderBrush="{StaticResource AppBorderMedBrush}" BorderThickness="1" Margin="0,0,0,12">
-                <StackPanel Spacing="4">
-                    <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AppAccentCyanBrush}" Text="{x:Bind Opt.TweakStatsLine, Mode=OneWay}" TextWrapping="Wrap" />
-                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}">
-                        <Run Text="Timer resolution (last run): " /><Run Text="{x:Bind Opt.TimerResolutionLine, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock FontSize="12" Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap">
-                        <Run Text="Executioner: " /><Run Text="{x:Bind Opt.ExecutionerStatusLine, Mode=OneWay}" />
-                    </TextBlock>
-                </StackPanel>
+                <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AppAccentCyanBrush}" Text="{x:Bind Opt.TweakStatsLine, Mode=OneWay}" TextWrapping="Wrap" />
             </Border>
 
             <TextBlock Style="{StaticResource Section}" Text="LAST RUN CHECKLIST" Margin="0,8,0,0" />
@@ -261,6 +254,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </StackPanel>
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>

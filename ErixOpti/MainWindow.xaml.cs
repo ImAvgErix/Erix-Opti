@@ -1,6 +1,8 @@
+using System;
 using ErixOpti.Services;
 using ErixOpti.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -24,6 +26,12 @@ public sealed partial class MainWindow : Window
     private void OnActivated(object sender, WindowActivatedEventArgs e)
     {
         if (_init) return; _init = true;
+        var dq = DispatcherQueue.GetForCurrentThread();
+        if (dq is not null)
+        {
+            SynchronizationContext.SetSynchronizationContext(new DispatcherQueueSynchronizationContext(dq));
+        }
+
         _wc.XamlRoot = Content.XamlRoot;
         _sink.Attach(DispatcherQueue);
         ContentFrame.Content = App.AppHost.Services.GetRequiredService<DashboardPage>();

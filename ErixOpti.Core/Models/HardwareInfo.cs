@@ -25,8 +25,9 @@ public sealed partial class HardwareInfo : ObservableObject
     [ObservableProperty] private string _gpuDriverVersion = "—";
     [ObservableProperty] private string _gpuDriverDate = "—";
 
-    // RAM
+    // RAM (TotalVisible = OS-visible; Installed = sum of DIMM capacity from SMBIOS)
     [ObservableProperty] private double _ramTotalGb;
+    [ObservableProperty] private double _ramInstalledGb;
     [ObservableProperty] private double _ramAvailableGb;
     [ObservableProperty] private int _ramSpeedMhz;
     [ObservableProperty] private string _ramType = "—";

@@ -87,7 +87,7 @@ public sealed class BackupService : IBackupService
             progress.Report($"BCD backup skipped: {ex.Message}");
         }
 
-        progress.Report("Backup complete.");
+        progress.Report("Backup finished. Starting optimizations…");
         return new BackupResult(true, restoreId, regPath, bcdPath, null);
     }
 

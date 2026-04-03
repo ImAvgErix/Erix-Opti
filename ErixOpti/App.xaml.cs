@@ -45,7 +45,6 @@ public partial class App : Application
                 s.AddSingleton<OptimizationsViewModel>();
                 s.AddSingleton<MainWindow>();
                 s.AddTransient<DashboardPage>();
-                s.AddHostedService<GameExecutionerHostedService>();
             }).Build();
 
         await AppHost.StartAsync();

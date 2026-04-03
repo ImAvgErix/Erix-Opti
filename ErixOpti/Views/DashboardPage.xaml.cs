@@ -44,7 +44,10 @@ public sealed partial class DashboardPage : Page
         sb.AppendLine($"PC: {h.PcName} | {h.OsEdition} Build {h.OsBuild} | {h.FormFactor}");
         sb.AppendLine($"CPU: {h.CpuName} ({h.CpuCores}C/{h.CpuLogicalProcessors}T, {h.CpuMaxClockMhz} MHz, L3 {HW.L3Display})");
         sb.AppendLine($"GPU: {h.GpuName} ({h.GpuMemoryGb:0.#} GB VRAM, Driver {h.GpuDriverVersion})");
-        sb.AppendLine($"RAM: {h.RamTotalGb:0.#} GB {h.RamType} @ {h.RamSpeedMhz} MHz ({h.RamSlotsUsed} sticks)");
+        var ramLine = h.RamInstalledGb >= 0.5
+            ? $"RAM: {h.RamInstalledGb:0.#} GB installed ({h.RamTotalGb:0.#} GB visible) · {h.RamType} @ {h.RamSpeedMhz} MHz · {h.RamSlotsUsed} sticks"
+            : $"RAM: {h.RamTotalGb:0.#} GB {h.RamType} @ {h.RamSpeedMhz} MHz ({h.RamSlotsUsed} sticks)";
+        sb.AppendLine(ramLine);
         sb.AppendLine($"Storage: {h.StorageSummary}");
         sb.AppendLine($"Board: {h.Motherboard} | BIOS: {h.BiosVersion}");
         sb.AppendLine($"Network: {h.NetworkAdapter} ({h.NetworkSpeed})");

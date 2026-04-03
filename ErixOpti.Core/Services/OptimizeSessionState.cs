@@ -7,10 +7,6 @@ public sealed class OptimizeSessionState : IOptimizeSessionState
 
     public bool RebootRecommended { get; private set; }
 
-    public string? MeasuredTimerResolutionMs { get; set; }
-
-    public bool ExecutionerActive { get; set; }
-
     public IReadOnlyList<OptimizeStepRecord> LastRunSteps
     {
         get
@@ -28,8 +24,6 @@ public sealed class OptimizeSessionState : IOptimizeSessionState
         {
             _steps.Clear();
         }
-
-        MeasuredTimerResolutionMs = null;
     }
 
     public void AddStep(string name, string reason, bool ok)
@@ -42,9 +36,5 @@ public sealed class OptimizeSessionState : IOptimizeSessionState
 
     public void SetRebootRecommended(bool value) => RebootRecommended = value;
 
-    public void ResetSessionFlags()
-    {
-        RebootRecommended = false;
-        ExecutionerActive = false;
-    }
+    public void ResetSessionFlags() => RebootRecommended = false;
 }
