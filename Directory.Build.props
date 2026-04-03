@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Product>ErixOpti</Product>
+    <Company>Erix</Company>
+    <Copyright>Erix</Copyright>
+  </PropertyGroup>
+</Project>

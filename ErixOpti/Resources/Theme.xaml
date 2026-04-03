@@ -6,16 +6,18 @@
 
     <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
 
-    <!-- Fluent-aligned dark layers (Win11 / Fluent 2 depth) -->
-    <Color x:Key="AppBg">#1C1C1C</Color>
-    <Color x:Key="AppSurface">#282828</Color>
-    <Color x:Key="AppCard">#323232</Color>
-    <Color x:Key="AppAccent">#00B4FF</Color>
-    <Color x:Key="AppBorder">#10FFFFFF</Color>
-    <Color x:Key="AppBorderMed">#1CFFFFFF</Color>
-    <Color x:Key="TextPrimary">#EAEAEA</Color>
-    <Color x:Key="TextSecondary">#7A7A7A</Color>
-    <Color x:Key="TextDim">#484848</Color>
+    <!-- ── Dark palette ── -->
+    <Color x:Key="AppBg">#0F0F11</Color>
+    <Color x:Key="AppSurface">#18181B</Color>
+    <Color x:Key="AppCard">#1E1E22</Color>
+    <Color x:Key="AppCardHover">#26262A</Color>
+    <Color x:Key="AppAccent">#3B82F6</Color>
+    <Color x:Key="AppAccentMuted">#2563EB</Color>
+    <Color x:Key="AppBorder">#0AFFFFFF</Color>
+    <Color x:Key="AppBorderMed">#14FFFFFF</Color>
+    <Color x:Key="TextPrimary">#F0F0F0</Color>
+    <Color x:Key="TextSecondary">#71717A</Color>
+    <Color x:Key="TextDim">#3F3F46</Color>
 
     <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBg}" />
     <SolidColorBrush x:Key="AppSurfaceBrush" Color="{StaticResource AppSurface}" />
@@ -30,11 +32,12 @@
     <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#F87171" />
 
-    <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
-    <CornerRadius x:Key="CardRadius">8</CornerRadius>
-    <CornerRadius x:Key="CardRadiusLg">12</CornerRadius>
-    <Thickness x:Key="CardPadding">20</Thickness>
-    <Thickness x:Key="PagePadding">36,28,36,28</Thickness>
+    <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="CardRadius">10</CornerRadius>
+    <CornerRadius x:Key="CardRadiusLg">14</CornerRadius>
+    <CornerRadius x:Key="PillRadius">20</CornerRadius>
+    <Thickness x:Key="CardPadding">16,14</Thickness>
+    <Thickness x:Key="PagePadding">32,24,32,24</Thickness>
 
     <Style x:Key="GlassCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource AppCardBrush}" />
@@ -43,20 +46,18 @@
         <Setter Property="CornerRadius" Value="{StaticResource CardRadius}" />
         <Setter Property="Padding" Value="{StaticResource CardPadding}" />
     </Style>
-    <!-- Hardware grid: equal tile height, calmer padding than default GlassCard -->
     <Style x:Key="HardwareSnapshotTile" TargetType="Border" BasedOn="{StaticResource GlassCard}">
-        <Setter Property="MinHeight" Value="128" />
-        <Setter Property="Padding" Value="16,14" />
+        <Setter Property="MinHeight" Value="118" />
     </Style>
     <Style x:Key="HeroCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource AppSurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource AppBorderMedBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="{StaticResource CardRadiusLg}" />
-        <Setter Property="Padding" Value="28,24" />
+        <Setter Property="Padding" Value="24,20" />
     </Style>
     <Style x:Key="PageTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource AppTextPrimaryBrush}" />
         <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
@@ -65,13 +66,12 @@
         <Setter Property="FontSize" Value="13" />
         <Setter Property="LineHeight" Value="20" />
         <Setter Property="Foreground" Value="{StaticResource AppTextSecondaryBrush}" />
-        <Setter Property="Margin" Value="0,0,0,4" />
     </Style>
     <Style x:Key="Section" TargetType="TextBlock">
         <Setter Property="FontSize" Value="11" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{StaticResource AppTextDimBrush}" />
-        <Setter Property="CharacterSpacing" Value="80" />
+        <Setter Property="CharacterSpacing" Value="100" />
         <Setter Property="Margin" Value="0,20,0,8" />
     </Style>
     <Style x:Key="Label" TargetType="TextBlock">
@@ -84,22 +84,24 @@
         <Setter Property="Foreground" Value="{StaticResource AppTextPrimaryBrush}" />
     </Style>
     <Style x:Key="BigValue" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Foreground" Value="{StaticResource AppAccentCyanBrush}" />
         <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
     </Style>
     <Style x:Key="AccentProgress" TargetType="ProgressBar">
         <Setter Property="Foreground" Value="{StaticResource AppAccentCyanBrush}" />
-        <Setter Property="Background" Value="#15FFFFFF" />
+        <Setter Property="Background" Value="#0AFFFFFF" />
         <Setter Property="CornerRadius" Value="3" />
-        <Setter Property="Height" Value="5" />
+        <Setter Property="Height" Value="4" />
     </Style>
+
+    <!-- Animations -->
     <animations:ImplicitAnimationSet x:Key="Entrance">
-        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.4" />
-        <animations:TranslationAnimation From="0,20,0" To="0" Duration="0:0:0.4" />
+        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.35" />
+        <animations:TranslationAnimation From="0,16,0" To="0" Duration="0:0:0.35" />
     </animations:ImplicitAnimationSet>
     <animations:ImplicitAnimationSet x:Key="FadeIn">
-        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.25" />
+        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.2" />
     </animations:ImplicitAnimationSet>
 </ResourceDictionary>

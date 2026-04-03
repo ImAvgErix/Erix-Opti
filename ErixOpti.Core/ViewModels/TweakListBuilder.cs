@@ -9,7 +9,7 @@ public static class TweakListBuilder
     public static readonly string[] CategoryOrder =
     [
         "Input", "System", "Memory", "Gaming", "GPU", "Power", "Network",
-        "Privacy", "Explorer", "Visual", "Storage",
+        "Privacy", "AI Removal", "Dark Mode", "Explorer", "Visual", "Storage",
         "Services", "Cleanup",
     ];
 
@@ -30,25 +30,18 @@ public static class TweakListBuilder
             {
                 vm.Items.Add(await MakeRowAsync(op, hw, ct));
             }
-
             target.Add(vm);
         }
 
         foreach (var cat in CategoryOrder)
         {
-            if (!map.TryGetValue(cat, out var list))
-            {
-                continue;
-            }
-
+            if (!map.TryGetValue(cat, out var list)) continue;
             seen.Add(cat);
             await AddCategoryAsync(cat, list);
         }
 
         foreach (var cat in map.Keys.Where(k => !seen.Contains(k)).OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
-        {
             await AddCategoryAsync(cat, map[cat]);
-        }
     }
 
     public static async Task<(int Active, int EligibleProbeable, int Total)> CountSummaryAsync(HardwareInfo hw, CancellationToken ct)
@@ -57,65 +50,38 @@ public static class TweakListBuilder
         int active = 0, eligible = 0, total = ops.Count;
         foreach (var op in ops)
         {
-            if (!op.ShouldApply(hw))
-            {
-                continue;
-            }
-
-            if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
+            if (!op.ShouldApply(hw)) continue;
+            if (op.Id.StartsWith("clean.", StringComparison.Ordinal)) continue;
             eligible++;
             bool? probe;
             if (op.TryGetAppliedStateAsync is not null)
-            {
                 probe = await op.TryGetAppliedStateAsync(hw, ct);
-            }
             else
-            {
                 probe = op.TryGetAppliedState?.Invoke(hw);
-            }
-
-            if (probe is true)
-            {
-                active++;
-            }
+            if (probe is true) active++;
         }
-
         return (active, eligible, total);
     }
 
     private static async Task<TweakRowVm> MakeRowAsync(TweakOperation op, HardwareInfo hw, CancellationToken ct)
     {
         if (!op.ShouldApply(hw))
-        {
-            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Skipped, "Skipped on this PC", "#78716C");
-        }
+            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Skipped, "Skipped", "#78716C");
 
         if (op.Id.StartsWith("clean.", StringComparison.Ordinal))
-        {
-            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.OneShot, "Runs during Auto Optimize", "#C084FC");
-        }
+            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.OneShot, "One-shot", "#C084FC");
 
         bool? r;
         if (op.TryGetAppliedStateAsync is not null)
-        {
             r = await op.TryGetAppliedStateAsync(hw, ct);
-        }
         else
-        {
             r = op.TryGetAppliedState?.Invoke(hw);
-        }
 
         if (r is null)
-        {
-            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Unknown, "Status not detected", "#FBBF24");
-        }
+            return new TweakRowVm(op.Id, op.Name, TweakUiStatus.Unknown, "Unknown", "#FBBF24");
 
         return r.Value
-            ? new TweakRowVm(op.Id, op.Name, TweakUiStatus.Active, "Already on", "#34D399")
-            : new TweakRowVm(op.Id, op.Name, TweakUiStatus.Inactive, "Not applied yet", "#94A3B8");
+            ? new TweakRowVm(op.Id, op.Name, TweakUiStatus.Active, "Active", "#34D399")
+            : new TweakRowVm(op.Id, op.Name, TweakUiStatus.Inactive, "Pending", "#94A3B8");
     }
 }

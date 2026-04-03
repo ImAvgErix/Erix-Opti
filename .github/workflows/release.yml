@@ -1,9 +1,10 @@
 name: Build and Release
 
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
 
 permissions:
   contents: write
@@ -23,10 +24,10 @@ jobs:
       - name: Restore
         run: dotnet restore ErixOpti.sln
 
-      - name: Build (Debug)
-        run: dotnet build ErixOpti.sln -c Debug --no-restore
+      - name: Build
+        run: dotnet build ErixOpti.sln -c Release --no-restore
 
-      - name: Publish single-file (Release)
+      - name: Publish single-file
         run: >
           dotnet publish ErixOpti/ErixOpti.csproj -c Release -r win-x64 --no-restore
           -p:PublishSingleFile=true
@@ -48,12 +49,13 @@ jobs:
           name: erixopti-build
           path: artifacts/**/*
 
-      - name: Create GitHub Release (main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: ErixOpti v${{ github.run_number }}
+          tag_name: ${{ github.ref_name }}
+          name: ErixOpti ${{ github.ref_name }}
+          body_path: CHANGELOG.md
           files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

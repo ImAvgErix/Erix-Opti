@@ -42,11 +42,14 @@ public static class RegistryTweaks
         D("reg.mmcss-gaming", "MMCSS gaming priority", "System", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games", "Priority", 6, 2),
         D("reg.mmcss-sched", "MMCSS scheduling Games", "System", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games", "Scheduling Category", 2, 0),
         D("reg.mmcss-sfio", "MMCSS SFIO priority Games", "System", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games", "SFIO Priority", 2, 0),
+        D("reg.svc-host-split", "SvcHostSplitThreshold", "System", hw => hw.HasHighRam, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control", "SvcHostSplitThresholdInKB", 0x03800000, 380000),
+        D("reg.auto-reboot-off", "No auto reboot for updates", "System", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoRebootWithLoggedOnUsers", 1, 0),
 
         // ── Memory ──
         D("reg.large-cache", "LargeSystemCache", "Memory", hw => hw.HasHighRam, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "LargeSystemCache", 1, 0),
         D("reg.no-paging-exec", "DisablePagingExecutive", "Memory", hw => hw.HasHighRam, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "DisablePagingExecutive", 1, 0),
         D("reg.nonpaged-pool", "NonPagedPoolSize max", "Memory", hw => hw.HasHighRam, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "NonPagedPoolSize", unchecked((int)0xFFFFFFFF), 0),
+        D("reg.io-page-lock-limit", "IoPageLockLimit", "Memory", hw => hw.HasHighRam, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "IoPageLockLimit", 0x10000, 0),
 
         // ── Gaming ──
         D("reg.gamemode-off", "Game Mode off", "Gaming", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\GameBar", "AutoGameModeEnabled", 0, 1),
@@ -57,6 +60,7 @@ public static class RegistryTweaks
         D("reg.fso-dsc", "Fullscreen DSC compat off", "Gaming", _ => true, RegistryHive.CurrentUser, @"System\GameConfigStore", "GameDVR_DXGIHonorFSEWindowsCompatible", 1, 0),
         D("reg.fso-hgm", "Fullscreen HGM off", "Gaming", _ => true, RegistryHive.CurrentUser, @"System\GameConfigStore", "GameDVR_HonorUserFSEBehaviorMode", 1, 0),
         D("reg.gpu-perf-pref", "GPU high performance preference", "Gaming", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\DirectX\UserGpuPreferences", "DirectXUserGlobalSettings", 2, 0),
+        D("reg.gamebar-off", "Game Bar off", "Gaming", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\GameBar", "UseNexusForGameBarEnabled", 0, 1),
 
         // ── Privacy ──
         D("reg.telemetry", "AllowTelemetry 0", "Privacy", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", 0, 1),
@@ -74,6 +78,23 @@ public static class RegistryTweaks
         D("reg.defender-sample", "Defender auto-sample off", "Privacy", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows Defender\Spynet", "SubmitSamplesConsent", 2, 1),
         D("reg.diag-off", "Diagnostic data off", "Privacy", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack", "ShowedToastAtLevel", 1, 0),
         D("reg.ink-off", "Windows Ink Workspace off", "Privacy", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\WindowsInkWorkspace", "AllowWindowsInkWorkspace", 0, 1),
+        D("reg.handwriting-off", "Handwriting telemetry off", "Privacy", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\TabletPC", "PreventHandwritingDataSharing", 1, 0),
+        D("reg.cdp-off", "Connected Devices off", "Privacy", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\System", "EnableCdp", 0, 1),
+        D("reg.tailored-off", "Tailored experiences off", "Privacy", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Privacy", "TailoredExperiencesWithDiagnosticDataEnabled", 0, 1),
+
+        // ── AI Removal ──
+        D("reg.copilot-off", "Copilot off", "AI Removal", _ => true, RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\WindowsCopilot", "TurnOffWindowsCopilot", 1, 0),
+        D("reg.copilot-policy", "Copilot policy off", "AI Removal", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot", "TurnOffWindowsCopilot", 1, 0),
+        D("reg.recall-off", "Recall off", "AI Removal", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\WindowsAI", "DisableAIDataAnalysis", 1, 0),
+        D("reg.recall-user", "Recall snapshots off", "AI Removal", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "DisableAIDataAnalysis", 1, 0),
+        D("reg.ai-companion", "AI companion off", "AI Removal", _ => true, RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\WindowsAI", "AllowAICompanion", 0, 1),
+        D("reg.search-ai", "Search AI off", "AI Removal", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\SearchSettings", "IsAADCloudSearchEnabled", 0, 1),
+        D("reg.search-ai2", "Search highlights off", "AI Removal", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\SearchSettings", "IsDynamicSearchBoxEnabled", 0, 1),
+
+        // ── Dark Mode ──
+        D("reg.dark-apps", "Dark mode apps", "Dark Mode", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 0, 1),
+        D("reg.dark-system", "Dark mode system", "Dark Mode", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "SystemUsesLightTheme", 0, 1),
+        D("reg.dark-transparency", "Transparency effects on", "Dark Mode", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "EnableTransparency", 1, 0),
 
         // ── Explorer / Visual ──
         D("reg.show-ext", "Show file extensions", "Explorer", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "HideFileExt", 0, 1),
@@ -85,6 +106,8 @@ public static class RegistryTweaks
         D("reg.drag-height", "Reduce drag detection", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragHeight", 2, 4),
         D("reg.drag-width", "Reduce drag detection width", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "DragWidth", 2, 4),
         D("reg.smooth-scroll", "Disable smooth scrolling", "Visual", _ => true, RegistryHive.CurrentUser, @"Control Panel\Desktop", "SmoothScroll", 0, 1),
+        D("reg.taskbar-search", "Taskbar search icon only", "Explorer", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Search", "SearchboxTaskbarMode", 1, 2),
+        D("reg.chat-off", "Chat icon off", "Explorer", _ => true, RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarMn", 0, 1),
 
         // ── Storage / NTFS ──
         D("reg.prefetch-off", "Prefetch off (SSD)", "Storage", hw => hw.HasSsdBootVolume, RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters", "EnablePrefetcher", 0, 3),

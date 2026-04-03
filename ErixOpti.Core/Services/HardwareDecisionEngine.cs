@@ -14,6 +14,8 @@ public static class HardwareDecisionEngine
         "Power" => 40,
         "Network" => 45,
         "Privacy" => 50,
+        "AI Removal" => 55,
+        "Dark Mode" => 58,
         "Explorer" => 60,
         "Visual" => 65,
         "Storage" => 70,
@@ -30,11 +32,7 @@ public static class HardwareDecisionEngine
             var ba = CategoryBand(a.Category);
             var bb = CategoryBand(b.Category);
             var c = ba.CompareTo(bb);
-            if (c != 0)
-            {
-                return c;
-            }
-
+            if (c != 0) return c;
             c = a.PlanOrder.CompareTo(b.PlanOrder);
             return c != 0 ? c : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
         });
@@ -43,5 +41,5 @@ public static class HardwareDecisionEngine
     }
 
     private static string DefaultReason(TweakOperation op, HardwareInfo hw) =>
-        $"Selected for this PC ({hw.FormFactor}, {hw.CpuManufacturer} CPU, {hw.PrimaryGpuVendor} GPU, {hw.RamTotalGb:0.#} GB RAM) because “{op.Name}” is part of the optimization profile.";
+        $"Selected for {hw.FormFactor} ({hw.CpuManufacturer} CPU, {hw.PrimaryGpuVendor} GPU, {hw.RamTotalGb:0.#} GB RAM).";
 }

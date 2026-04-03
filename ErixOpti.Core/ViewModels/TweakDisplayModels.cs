@@ -21,18 +21,14 @@ public sealed class TweakCategoryVm
 public sealed class PlannedDecisionRowVm(string title, string reason)
 {
     public string Title { get; } = title;
-
     public string Reason { get; } = reason;
 }
 
 public sealed class LastOptimizeStepVm(string name, string reason, bool ok)
 {
     public string Name { get; } = name;
-
     public string Reason { get; } = reason;
-
     public bool Ok { get; } = ok;
-
     public string StatusLabel => Ok ? "Applied" : "Failed";
 }
 

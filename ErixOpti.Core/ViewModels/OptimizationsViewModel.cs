@@ -29,70 +29,42 @@ public sealed partial class OptimizationsViewModel : ObservableObject
         _session = session;
         _dialogs = dialogs;
         TweakCategories = new ObservableCollection<TweakCategoryVm>();
-        PlannedDecisions = new ObservableCollection<PlannedDecisionRowVm>();
-        LastRunResults = new ObservableCollection<LastOptimizeStepVm>();
     }
 
     public ObservableCollection<TweakCategoryVm> TweakCategories { get; }
 
-    public ObservableCollection<PlannedDecisionRowVm> PlannedDecisions { get; }
-
-    public ObservableCollection<LastOptimizeStepVm> LastRunResults { get; }
-
-    [ObservableProperty] private string _statusMessage = "Ready to optimize.";
-
+    [ObservableProperty] private string _statusMessage = "Ready.";
     [ObservableProperty] private string _currentStep = "";
-
     [ObservableProperty] private double _progressPercent;
-
     [ObservableProperty] private bool _isRunning;
-
     [ObservableProperty] private string _hardwareSummary = "";
-
     [ObservableProperty] private string _tweakStatsLine = "";
 
     public bool IsNotRunning => !IsRunning;
-
     partial void OnIsRunningChanged(bool value) => OnPropertyChanged(nameof(IsNotRunning));
 
     public async Task RefreshDashboardAsync(CancellationToken ct = default)
     {
         var h = _hw.Current;
-        HardwareSummary = $"{h.CpuName}  ·  {h.GpuName}  ·  {h.RamTotalGb:0.#} GB RAM";
-
-        PlannedDecisions.Clear();
-        foreach (var pt in HardwareDecisionEngine.BuildPlan(h))
-        {
-            PlannedDecisions.Add(new PlannedDecisionRowVm(pt.Operation.Name, pt.DecisionReason));
-        }
+        HardwareSummary = $"{h.CpuName}  ·  {h.GpuName}  ·  {h.RamTotalGb:0.#} GB";
 
         await TweakListBuilder.RebuildAsync(TweakCategories, h, ct);
         var (active, eligible, total) = await TweakListBuilder.CountSummaryAsync(h, ct);
         TweakStatsLine = eligible > 0
-            ? $"{active} of {eligible} detectable tweaks already active  ·  {total} total in catalog"
+            ? $"{active} / {eligible} active  ·  {total} total"
             : $"{total} tweaks in catalog";
-
-        LastRunResults.Clear();
-        foreach (var s in _session.LastRunSteps)
-        {
-            LastRunResults.Add(new LastOptimizeStepVm(s.Name, s.Reason, s.Ok));
-        }
     }
 
     [RelayCommand]
     private async Task AutoOptimizeAsync()
     {
-        if (IsRunning)
-        {
-            return;
-        }
-
+        if (IsRunning) return;
         IsRunning = true;
         ProgressPercent = 0;
         CurrentStep = "";
         try
         {
-            StatusMessage = "Creating backup...";
+            StatusMessage = "Creating restore point...";
             var bp = new Progress<string>(s => StatusMessage = s);
             var br = await _backup.CreateFullBackupAsync(bp, CancellationToken.None);
             if (!br.Success)
@@ -105,12 +77,11 @@ public sealed partial class OptimizationsViewModel : ObservableObject
             var plan = await _engine.BuildPlanAsync(CancellationToken.None);
             if (plan.TotalCount == 0)
             {
-                StatusMessage = "No tweaks apply to this PC.";
+                StatusMessage = "Nothing to apply.";
                 return;
             }
 
-            StatusMessage = $"Applying {plan.TotalCount} optimizations...";
-
+            StatusMessage = $"Applying {plan.TotalCount} tweaks...";
             var progress = new Progress<OptimizeProgress>(p =>
             {
                 ProgressPercent = (double)p.Current / Math.Max(p.Total, 1) * 100.0;
@@ -120,20 +91,9 @@ public sealed partial class OptimizationsViewModel : ObservableObject
             await _engine.ExecutePlanAsync(plan, progress, CancellationToken.None);
             ProgressPercent = 100;
 
-            LastRunResults.Clear();
-            foreach (var s in _session.LastRunSteps)
-            {
-                LastRunResults.Add(new LastOptimizeStepVm(s.Name, s.Reason, s.Ok));
-            }
-
             if (_session.RebootRecommended && await _dialogs.PromptRestartAfterOptimizeAsync())
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "shutdown.exe",
-                    Arguments = "/r /t 0",
-                    UseShellExecute = true,
-                });
+                Process.Start(new ProcessStartInfo { FileName = "shutdown.exe", Arguments = "/r /t 0", UseShellExecute = true });
             }
         }
         catch (Exception ex)

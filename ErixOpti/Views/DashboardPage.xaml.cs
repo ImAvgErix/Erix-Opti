@@ -26,7 +26,7 @@ public sealed partial class DashboardPage : Page
         await _hardware.RefreshAsync();
         await Opt.RefreshDashboardAsync();
         var t = DispatcherQueue.CreateTimer();
-        t.Interval = TimeSpan.FromSeconds(12);
+        t.Interval = TimeSpan.FromSeconds(15);
         t.Tick += async (_, _) =>
         {
             await _hardware.RefreshAsync();
@@ -38,7 +38,8 @@ public sealed partial class DashboardPage : Page
     private async void OnExport(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         var h = HW.Model;
-        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), $"erixopti-hw-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
+        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+            $"erixopti-hw-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
         var sb = new StringBuilder();
         sb.AppendLine("ErixOpti Hardware Report").AppendLine($"{DateTime.Now:F}").AppendLine();
         sb.AppendLine($"PC: {h.PcName} | {h.OsEdition} Build {h.OsBuild} | {h.FormFactor}");
