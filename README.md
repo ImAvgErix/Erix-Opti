@@ -1,4 +1,4 @@
-# ErixOpti v7
+# ErixOpti v1
 
 The ultimate safe, intelligent gaming optimization companion for Windows 11.
 
