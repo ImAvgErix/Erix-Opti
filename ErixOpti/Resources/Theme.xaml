@@ -6,7 +6,7 @@
 
     <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
 
-    <!-- ── Dark palette ── -->
+    <!-- Dark palette -->
     <Color x:Key="AppBg">#0F0F11</Color>
     <Color x:Key="AppSurface">#18181B</Color>
     <Color x:Key="AppCard">#1E1E22</Color>
@@ -32,12 +32,17 @@
     <SolidColorBrush x:Key="WarningBrush" Color="#FBBF24" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#F87171" />
 
+    <!-- NavigationView overrides -->
+    <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{StaticResource AppBg}" />
+    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource AppBg}" />
+
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
     <CornerRadius x:Key="CardRadius">10</CornerRadius>
     <CornerRadius x:Key="CardRadiusLg">14</CornerRadius>
     <CornerRadius x:Key="PillRadius">20</CornerRadius>
     <Thickness x:Key="CardPadding">16,14</Thickness>
-    <Thickness x:Key="PagePadding">32,24,32,24</Thickness>
+    <Thickness x:Key="PagePadding">28,20,28,20</Thickness>
 
     <Style x:Key="GlassCard" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource AppCardBrush}" />
@@ -96,10 +101,9 @@
         <Setter Property="Height" Value="4" />
     </Style>
 
-    <!-- Animations -->
     <animations:ImplicitAnimationSet x:Key="Entrance">
-        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.35" />
-        <animations:TranslationAnimation From="0,16,0" To="0" Duration="0:0:0.35" />
+        <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.3" />
+        <animations:TranslationAnimation From="0,12,0" To="0" Duration="0:0:0.3" />
     </animations:ImplicitAnimationSet>
     <animations:ImplicitAnimationSet x:Key="FadeIn">
         <animations:OpacityAnimation From="0" To="1" Duration="0:0:0.2" />

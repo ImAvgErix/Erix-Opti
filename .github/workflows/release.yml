@@ -42,6 +42,8 @@ jobs:
           New-Item -ItemType Directory -Force -Path artifacts | Out-Null
           $exe = Get-ChildItem -Recurse -Filter "ErixOpti.exe" "publish/singlefile" | Select-Object -First 1
           if ($exe) { Copy-Item -Force $exe.FullName "artifacts/ErixOpti.exe" }
+          Copy-Item -Force install.ps1 artifacts/install.ps1
+          Copy-Item -Force uninstall.ps1 artifacts/uninstall.ps1
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

@@ -11,14 +11,13 @@ public static class NetworkTweaks
         new()
         {
             Id = "net.tcp", Name = "TCP optimization", Category = "Network",
+            Description = "Disables heuristics, timestamps, ECN; enables RSS.",
             ShouldApply = _ => true,
             TryGetAppliedStateAsync = async (_, ct) =>
             {
                 var (code, stdout, _) = await ProcessRunner.RunAsync("netsh", "int tcp show global", false, null, ct);
                 if (code != 0) return null;
-                var heuristics = stdout.Contains("disabled", StringComparison.OrdinalIgnoreCase) || stdout.Contains("deaktiviert", StringComparison.OrdinalIgnoreCase);
-                var rss = stdout.Contains("enabled", StringComparison.OrdinalIgnoreCase);
-                return heuristics && rss ? true : false;
+                return stdout.Contains("disabled", StringComparison.OrdinalIgnoreCase) ? true : false;
             },
             Apply = async (p, ct) =>
             {
@@ -31,7 +30,6 @@ public static class NetworkTweaks
             },
             Revert = async (p, ct) =>
             {
-                p.Report("Revert TCP stack");
                 await ProcessRunner.RunAsync("netsh", "int tcp set heuristics enabled", false, null, ct);
                 await ProcessRunner.RunAsync("netsh", "int tcp set global timestamps=enabled", false, null, ct);
                 await ProcessRunner.RunAsync("netsh", "int tcp set global ecncapability=default", false, null, ct);
@@ -40,6 +38,7 @@ public static class NetworkTweaks
         new()
         {
             Id = "net.nagle", Name = "Nagle off", Category = "Network",
+            Description = "Disables Nagle's algorithm for lower latency.",
             ShouldApply = _ => true,
             TryGetAppliedStateAsync = async (_, ct) =>
             {
@@ -65,6 +64,7 @@ public static class NetworkTweaks
         new()
         {
             Id = "net.lso-off", Name = "Large Send Offload off", Category = "Network",
+            Description = "Disables LSO for more consistent packet handling.",
             ShouldApply = _ => true,
             TryGetAppliedStateAsync = async (_, ct) =>
             {
@@ -73,8 +73,7 @@ public static class NetworkTweaks
                     false, null, ct);
                 if (code != 0) return null;
                 var t = stdout.Trim();
-                if (t == "na") return true;
-                return t == "True";
+                return t == "na" ? true : t == "True";
             },
             Apply = async (p, ct) =>
             {
@@ -93,23 +92,9 @@ public static class NetworkTweaks
         new()
         {
             Id = "net.nic-power", Name = "NIC power management off", Category = "Network",
+            Description = "Prevents NIC from sleeping (desktop only).",
             ShouldApply = hw => hw.IsDesktop,
-            TryGetAppliedState = _ =>
-            {
-                try
-                {
-                    using var bk = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-                    using var adapters = bk.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}");
-                    if (adapters is null) return null;
-                    foreach (var sub in adapters.GetSubKeyNames())
-                    {
-                        using var k = adapters.OpenSubKey(sub);
-                        if (k?.GetValue("PnPCapabilities") is int v && v == 24) return true;
-                    }
-                    return false;
-                }
-                catch { return null; }
-            },
+            TryGetAppliedState = _ => null,
             Apply = async (p, ct) =>
             {
                 p.Report("NIC power saving off");
@@ -119,7 +104,6 @@ public static class NetworkTweaks
             },
             Revert = async (p, ct) =>
             {
-                p.Report("Revert NIC power");
                 await ProcessRunner.RunAsync("powershell.exe",
                     "-NoProfile -Command \"Get-NetAdapter -Physical | ForEach-Object { $path = 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\' + $_.InterfaceGuid; Remove-ItemProperty -Path $path -Name 'PnPCapabilities' -EA SilentlyContinue }\"",
                     false, null, ct);
@@ -128,6 +112,7 @@ public static class NetworkTweaks
         new()
         {
             Id = "net.dns-cache", Name = "DNS cache optimized", Category = "Network",
+            Description = "Sets DNS cache TTL to 24h, negative TTL to 5s.",
             ShouldApply = _ => true,
             TryGetAppliedState = _ =>
             {
@@ -135,19 +120,37 @@ public static class NetworkTweaks
                 var b = RegistryTweakHelper.TryReadDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\Dnscache\Parameters", "MaxNegativeCacheTtl", out var neg) && neg == 5;
                 return a && b;
             },
-            Apply = async (p, ct) =>
+            Apply = (p, _) =>
             {
-                p.Report("Optimize DNS cache");
+                p.Report("DNS cache optimize");
                 RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\Dnscache\Parameters", "MaxCacheTtl", 86400);
                 RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\Dnscache\Parameters", "MaxNegativeCacheTtl", 5);
-                await Task.CompletedTask;
+                return Task.CompletedTask;
             },
-            Revert = async (p, ct) =>
+            Revert = (p, _) =>
             {
                 RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\Dnscache\Parameters", "MaxCacheTtl");
                 RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\Dnscache\Parameters", "MaxNegativeCacheTtl");
-                await Task.CompletedTask;
+                return Task.CompletedTask;
             }
+        },
+        new()
+        {
+            Id = "net.smb-throttle", Name = "SMB throttling off", Category = "Network",
+            Description = "Disables SMB bandwidth throttling for faster file transfers.",
+            ShouldApply = _ => true,
+            TryGetAppliedState = _ => RegistryTweakHelper.TryReadDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters", "DisableBandwidthThrottling", out var v) && v == 1,
+            Apply = (p, _) => { p.Report("SMB throttling off"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters", "DisableBandwidthThrottling", 1); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters", "DisableBandwidthThrottling"); return Task.CompletedTask; }
+        },
+        new()
+        {
+            Id = "net.llmnr-off", Name = "LLMNR off", Category = "Network",
+            Description = "Disables Link-Local Multicast Name Resolution.",
+            ShouldApply = _ => true,
+            TryGetAppliedState = _ => RegistryTweakHelper.TryReadDword(RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows NT\DNSClient", "EnableMulticast", out var v) && v == 0,
+            Apply = (p, _) => { p.Report("LLMNR off"); RegistryTweakHelper.WriteDword(RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows NT\DNSClient", "EnableMulticast", 0); return Task.CompletedTask; },
+            Revert = (p, _) => { RegistryTweakHelper.DeleteValue(RegistryHive.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows NT\DNSClient", "EnableMulticast"); return Task.CompletedTask; }
         },
     ];
 }

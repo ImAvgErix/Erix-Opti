@@ -49,7 +49,7 @@ public sealed partial class OptimizationsViewModel : ObservableObject
         HardwareSummary = $"{h.CpuName}  ·  {h.GpuName}  ·  {h.RamTotalGb:0.#} GB";
 
         await TweakListBuilder.RebuildAsync(TweakCategories, h, ct);
-        var (active, eligible, total) = await TweakListBuilder.CountSummaryAsync(h, ct);
+        var (active, eligible, total) = await TweakListBuilder.CountAsync(h, ct);
         TweakStatsLine = eligible > 0
             ? $"{active} / {eligible} active  ·  {total} total"
             : $"{total} tweaks in catalog";

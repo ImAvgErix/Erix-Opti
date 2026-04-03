@@ -19,15 +19,25 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
-        if (!Core.Helpers.AdminHelper.IsRunningAsAdministrator()) { _ = Core.Helpers.AdminHelper.TryRestartElevated(); Exit(); return; }
+        if (!Core.Helpers.AdminHelper.IsRunningAsAdministrator())
+        {
+            _ = Core.Helpers.AdminHelper.TryRestartElevated();
+            Exit();
+            return;
+        }
 
-        var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ErixOpti", "logs", "app-.log");
+        var logPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ErixOpti", "logs", "app-.log");
         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
         var logVm = new LogViewModel();
         var uiSink = new UiLogSink(logVm);
 
-        Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().Enrich.FromLogContext()
-            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day).WriteTo.Sink(uiSink).CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug().Enrich.FromLogContext()
+            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
+            .WriteTo.Sink(uiSink)
+            .CreateLogger();
 
         AppHost = Host.CreateDefaultBuilder()
             .ConfigureLogging(lb => { lb.ClearProviders(); lb.AddSerilog(Log.Logger, dispose: true); })
@@ -44,7 +54,9 @@ public partial class App : Application
                 s.AddSingleton<HardwareViewModel>();
                 s.AddSingleton<OptimizationsViewModel>();
                 s.AddSingleton<MainWindow>();
-                s.AddTransient<DashboardPage>();
+                s.AddTransient<HomePage>();
+                s.AddTransient<CatalogPage>();
+                s.AddTransient<LogPage>();
             }).Build();
 
         await AppHost.StartAsync();

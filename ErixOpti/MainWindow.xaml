@@ -10,12 +10,41 @@
         <media:MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
     <Grid Background="{StaticResource AppBackgroundBrush}" RequestedTheme="Dark">
-        <Frame x:Name="ContentFrame" RequestedTheme="Dark">
-            <Frame.ContentTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-                </TransitionCollection>
-            </Frame.ContentTransitions>
-        </Frame>
+        <NavigationView x:Name="NavView"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        PaneDisplayMode="Left"
+                        OpenPaneLength="200"
+                        IsPaneOpen="True"
+                        SelectionChanged="OnNavChanged"
+                        RequestedTheme="Dark"
+                        Background="Transparent">
+            <NavigationView.PaneCustomContent>
+                <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,12,0,16">
+                    <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="{StaticResource AppAccentCyanBrush}" />
+                    <TextBlock Text="ErixOpti" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource AppTextPrimaryBrush}"
+                               FontFamily="Segoe UI Variable Display" VerticalAlignment="Center" />
+                </StackPanel>
+            </NavigationView.PaneCustomContent>
+            <NavigationView.MenuItems>
+                <NavigationViewItem Tag="Home" Content="Home">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE80F;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="Catalog" Content="Catalog">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE71D;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Tag="Log" Content="Log">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE9D5;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <Frame x:Name="ContentFrame" RequestedTheme="Dark">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="16" />
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
+        </NavigationView>
     </Grid>
 </Window>

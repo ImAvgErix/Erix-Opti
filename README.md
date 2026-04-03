@@ -44,7 +44,15 @@ Every registry and service tweak has a live status probe. Power tweaks read the 
 
 ## Installation
 
-Download `ErixOpti.exe` from the [latest release](../../releases/latest) and run it. No installer needed — it's a single self-contained executable.
+Download all files from the [latest release](../../releases/latest), then run the installer in an elevated PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+This installs to `C:\Program Files\ErixOpti`, creates Start Menu and Desktop shortcuts, and registers in Add/Remove Programs. Uninstall from Settings or run `uninstall.ps1`.
+
+Alternatively, just run `ErixOpti.exe` directly — it's a single self-contained executable that works without installation.
 
 ## Building from Source
 

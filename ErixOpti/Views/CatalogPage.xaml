@@ -1,0 +1,84 @@
+<Page
+    x:Class="ErixOpti.Views.CatalogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ani="using:CommunityToolkit.WinUI.Animations"
+    xmlns:conv="using:ErixOpti.Converters"
+    xmlns:vm="using:ErixOpti.Core.ViewModels"
+    x:DataType="local:CatalogPage"
+    xmlns:local="using:ErixOpti.Views"
+    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    RequestedTheme="Dark">
+    <Page.Resources>
+        <conv:HexToBrushConverter x:Key="HexToBrush" />
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled">
+        <Grid Padding="{StaticResource PagePadding}" HorizontalAlignment="Stretch"
+              ani:Implicit.ShowAnimations="{StaticResource Entrance}">
+            <StackPanel MaxWidth="920" HorizontalAlignment="Center" Spacing="0">
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="4">
+                        <TextBlock Style="{StaticResource PageTitle}" Text="Tweak Catalog" />
+                        <TextBlock Style="{StaticResource PageSub}" Text="Live status of every optimization." />
+                    </StackPanel>
+                    <Border Grid.Column="1" CornerRadius="{StaticResource PillRadius}" Padding="12,6"
+                            Background="#0AFFFFFF" VerticalAlignment="Top" Margin="0,4,0,0">
+                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource AppAccentCyanBrush}"
+                                   Text="{x:Bind VM.TweakStatsLine, Mode=OneWay}" />
+                    </Border>
+                </Grid>
+
+                <ItemsControl ItemsSource="{x:Bind VM.TweakCategories, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:TweakCategoryVm">
+                            <StackPanel Spacing="6" Margin="0,16,0,0">
+                                <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource AppTextSecondaryBrush}"
+                                           Text="{x:Bind Name}" CharacterSpacing="80" />
+                                <ItemsControl ItemsSource="{x:Bind Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:TweakRowVm">
+                                            <Border Margin="0,0,0,4" CornerRadius="8"
+                                                    Background="{StaticResource AppCardBrush}"
+                                                    BorderBrush="{StaticResource AppGlassBorderBrush}" BorderThickness="1">
+                                                <Grid Padding="12,10" ColumnSpacing="10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="3" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0" CornerRadius="2" VerticalAlignment="Stretch"
+                                                            Background="{x:Bind AccentHex, Mode=OneTime, Converter={StaticResource HexToBrush}}" />
+                                                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                        <TextBlock Text="{x:Bind DisplayName}" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource AppTextPrimaryBrush}" TextWrapping="Wrap" />
+                                                        <TextBlock Text="{x:Bind Description}" FontSize="11" MaxLines="2"
+                                                                   Foreground="{StaticResource AppTextSecondaryBrush}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                    <Border Grid.Column="2" CornerRadius="{StaticResource PillRadius}" Padding="10,4" VerticalAlignment="Center"
+                                                            Background="#0AFFFFFF">
+                                                        <TextBlock FontSize="11" FontWeight="SemiBold"
+                                                                   Foreground="{x:Bind AccentHex, Mode=OneTime, Converter={StaticResource HexToBrush}}"
+                                                                   Text="{x:Bind StatusLabel}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>
