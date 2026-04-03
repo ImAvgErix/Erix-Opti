@@ -1,4 +1,0 @@
-Copy optional installers and helpers into Assets\ or Assets\Tools\ before publish.
-Examples: DefenderRemover.exe, AdvancedRun.exe (see advancedrun-x64\),
-TrustedInstaller launcher .cmd/.exe, WebView2 bootstrapper, VC++ AIO, dxwebsetup,
-Desktop App Installer .msixbundle, optional TI elevation .exe.
