@@ -1,4 +1,4 @@
-# ErixOpti v2
+# ErixOpti v7
 
 The ultimate safe, intelligent gaming optimization companion for Windows 11.
 
@@ -27,29 +27,3 @@ The ultimate safe, intelligent gaming optimization companion for Windows 11.
 - **GPU** (4): MPO, HAGS, TDR, NVIDIA shader cache
 - **Network** (2): TCP optimization, Nagle disable
 - **Cleanup** (5): TEMP, Prefetch, WU cache, event logs, DISM
-
-### Downloads
-- In-app download manager with progress bars
-- VC++ Redist, DirectX, .NET runtimes (direct download + silent install)
-- GPU/chipset driver links (NVIDIA, AMD, Intel)
-- Utility links (GPU-Z, HWiNFO, DDU, NVCleanInstall, NPI)
-
-### Tools
-- Deep system cleanup with progress tracking
-- System restore point creation
-- Control panel shortcuts (Programs, Power, Device Manager, Services, Disk Management, Event Viewer, Firewall)
-
-## Tech Stack
-- WinUI 3 / Windows App SDK 1.8
-- .NET 10, CommunityToolkit.Mvvm, Serilog
-- Mica backdrop, dark theme (#09090B), cyan accent (#00B4FF)
-
-## Build
-```powershell
-dotnet build ErixOpti.sln -c Release
-```
-
-## Requirements
-- Windows 11 (build 10.0.26100+)
-- Administrator elevation (auto-prompts)
-- .NET 10 SDK
